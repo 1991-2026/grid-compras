@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Grid Compras</title>
+
+<style>
+body {
+  font-family: Arial;
+  padding: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+}
+
+th {
+  background: #f2f2f2;
+}
+
+button {
+  padding: 6px 10px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.add {
+  background: #2e6da4;
+  color: white;
+  border: none;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Itens de Cotação</h2>
+
+<table id="grid">
+  <thead>
+    <tr>
+      <th>Código</th>
+      <th>Descrição</th>
+      <th>Quantidade</th>
+      <th>Prazo</th>
+      <th>Ação</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<button class="add" onclick="addRow()">+ Adicionar linha</button>
+
+<script>
+let data = [];
+
+function addRow() {
+  data.push({codigo:'', descricao:'', quantidade:'', prazo:''});
+  render();
+}
+
+function removeRow(i) {
+  data.splice(i, 1);
+  render();
+}
+
+function update(i, campo, valor) {
+  data[i][campo] = valor;
+}
+
+function render() {
+  const body = document.querySelector("#grid tbody");
+  body.innerHTML = "";
+
+  data.forEach((item, i) => {
+    body.innerHTML += `
+      <tr>
+        <td><input value="${item.codigo}" onchange="update(${i}, 'codigo', this.value)"></td>
+        <td><input value="${item.descricao}" onchange="update(${i}, 'descricao', this.value)"></td>
+        <td><input type="number" value="${item.quantidade}" onchange="update(${i}, 'quantidade', this.value)"></td>
+        <td><input value="${item.prazo}" onchange="update(${i}, 'prazo', this.value)"></td>
+        <td><button onclick="removeRow(${i})">X</button></td>
+      </tr>
+    `;
+  });
+}
+</script>
+
+</body>
+</html>
