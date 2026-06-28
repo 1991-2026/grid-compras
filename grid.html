@@ -22,11 +22,7 @@ th { background: #eee; }
 .comex { background: #f2dede; }
 .ctrl { background: #fcf8e3; }
 
-input {
-  width: 100%;
-  border: none;
-  text-align: center;
-}
+input { width: 100%; border: none; text-align: center; }
 
 button {
   padding: 6px 10px;
@@ -40,7 +36,6 @@ button {
   border: none;
 }
 </style>
-
 </head>
 
 <body>
@@ -49,25 +44,8 @@ button {
 
 <table>
 <thead>
-<tr>
-  <th class="pcp">Código</th>
-  <th class="pcp">Descrição</th>
-  <th class="pcp">Qtd</th>
-  <th class="pcp">Prazo PCP</th>
-
-  <th class="compras">Preço Compras</th>
-  <th class="compras">Prazo Compras</th>
-
-  <th class="comex">Preço COMEX</th>
-  <th class="comex">Prazo COMEX</th>
-
-  <th class="ctrl">Melhor Preço</th>
-  <th class="ctrl">Aprovar</th>
-
-  <th>Ação</th>
-</tr>
+<tr id="cabecalho"></tr>
 </thead>
-
 <tbody id="grid"></tbody>
 </table>
 
@@ -75,179 +53,156 @@ button {
 
 <script>
 
-// ===== PERFIL
+// ===== PERFIL =====
 const params = new URLSearchParams(window.location.search);
 let perfil = params.get("perfil") || "pcp";
 
-// ===== DADOS
+// ===== DADOS =====
 let dados = [];
 let produtos = [];
 
-// ===== CONEXÃO SENIOR X (CORRETA)
-function getCampoBPM(nome){
-  try{
-    if (parent && parent.WCMAPI && parent.WCMAPI.form){
-      return parent.WCMAPI.form.getValue(nome);
-    }
-  }catch(e){
-    console.error("Erro ao ler BPM:", e);
-  }
-  return "";
+// ===== LOCAL STORAGE =====
+function salvar(){
+  localStorage.setItem("grid_dados", JSON.stringify(dados));
 }
 
-function setCampoBPM(nome, valor){
-  try{
-    if (parent && parent.WCMAPI && parent.WCMAPI.form){
-      parent.WCMAPI.form.setValue(nome, valor);
-    }
-  }catch(e){
-    console.error("Erro ao salvar BPM:", e);
+function carregar(){
+  let json = localStorage.getItem("grid_dados");
+  if(json){
+    dados = JSON.parse(json);
   }
 }
 
-// ===== CARREGAR DADOS DO BPM
-function carregarDoBPM(){
-  let json = getCampoBPM("grid_dados");
-
-  if(json && json !== ""){
-    try{
-      dados = JSON.parse(json);
-    }catch(e){
-      console.error("Erro ao converter JSON:", e);
-    }
-  }
-}
-
-// ===== SALVAR AUTOMATICAMENTE
-function salvarNoBPM(){
-  let json = JSON.stringify(dados);
-  setCampoBPM("grid_dados", json);
-}
-
-// ===== CARREGAR CSV
+// ===== CSV =====
 fetch("PRODUTOS.csv")
-.then(res => res.text())
+.then(r => r.text())
 .then(text => {
-
   let linhas = text.split(/\r?\n/);
-
-  linhas.forEach((linha, i) => {
-
-    if(i === 0 || linha.trim() === "") return;
-
-    let sep = linha.includes(";") ? ";" : ",";
-    let col = linha.split(sep);
-
+  linhas.forEach((l,i)=>{
+    if(i===0 || !l.trim()) return;
+    let sep = l.includes(";") ? ";" : ",";
+    let c = l.split(sep);
     produtos.push({
-      codigo: col[0]?.trim(),
-      descricao: col[1]?.trim()
+      codigo: c[0].trim(),
+      descricao: c[1].trim()
     });
-
   });
 });
 
-// ===== FUNÇÕES DO GRID
-function addLinha(){
-  dados.push({
-    codigo:"",
-    descricao:"",
-    qtd:"",
-    prazo_pcp:"",
-    preco_compras:"",
-    prazo_compras:"",
-    preco_comex:"",
-    prazo_comex:"",
-    melhor_preco:"",
-    aprovado:false
-  });
+// ===== COLUNAS DINÂMICAS =====
+function colunas(){
 
-  salvarNoBPM();
+  let cols = [];
+
+  if(perfil !== "controladoria"){
+    cols.push({c:"codigo", t:"Código"});
+    cols.push({c:"descricao", t:"Descrição"});
+    cols.push({c:"qtd", t:"Qtd"});
+    cols.push({c:"prazo_pcp", t:"Prazo"});
+  }
+
+  if(perfil === "compras"){
+    cols.push({c:"preco_compras", t:"Preço Compras"});
+    cols.push({c:"prazo_compras", t:"Prazo Compras"});
+  }
+
+  if(perfil === "comex"){
+    cols.push({c:"preco_comex", t:"Preço COMEX"});
+    cols.push({c:"prazo_comex", t:"Prazo COMEX"});
+  }
+
+  if(perfil === "controladoria"){
+    cols.push({c:"preco_compras", t:"Preço Compras"});
+    cols.push({c:"preco_comex", t:"Preço COMEX"});
+    cols.push({c:"melhor_preco", t:"Melhor"});
+    cols.push({c:"aprovado", t:"Aprovar"});
+  }
+
+  cols.push({c:"acao", t:"Ação"});
+
+  return cols;
+}
+
+// ===== EDITAR =====
+function podeEditar(c){
+  if(perfil==="pcp") return ["codigo","descricao","qtd","prazo_pcp"].includes(c);
+  if(perfil==="compras") return c.includes("compras");
+  if(perfil==="comex") return c.includes("comex");
+  if(perfil==="controladoria") return ["aprovado"].includes(c);
+  return false;
+}
+
+// ===== ADD =====
+function addLinha(){
+  dados.push({});
+  salvar();
   render();
 }
 
-function podeEditar(campo){
-  if(perfil==="pcp") return ["codigo","descricao","qtd","prazo_pcp"].includes(campo);
-  if(perfil==="compras") return ["preco_compras","prazo_compras"].includes(campo);
-  if(perfil==="comex") return ["preco_comex","prazo_comex"].includes(campo);
-  if(perfil==="controladoria") return ["melhor_preco","aprovado"].includes(campo);
-  return false;
-}
+// ===== UPDATE =====
+function update(i,c,v){
 
-function ocultar(campo){
-  if(perfil==="compras" && campo.includes("comex")) return true;
-  if(perfil==="comex" && campo.includes("compras")) return true;
-  return false;
-}
+  dados[i][c] = v;
 
-function update(i,campo,valor){
-
-  dados[i][campo] = valor;
-
-  // descrição automática
-  if(campo === "codigo"){
-    let p = produtos.find(x => x.codigo == valor);
+  if(c==="codigo"){
+    let p = produtos.find(x=>x.codigo==v);
     dados[i].descricao = p ? p.descricao : "";
   }
 
-  // melhor preço
-  let c = parseFloat(dados[i].preco_compras || 999999);
-  let x = parseFloat(dados[i].preco_comex || 999999);
-  dados[i].melhor_preco = Math.min(c, x);
+  let c1 = parseFloat(dados[i].preco_compras||999999);
+  let c2 = parseFloat(dados[i].preco_comex||999999);
 
-  salvarNoBPM();
+  dados[i].melhor_preco = Math.min(c1,c2);
+
+  salvar();
   render();
 }
 
-function removeLinha(i){
+// ===== REMOVE =====
+function remover(i){
   dados.splice(i,1);
-  salvarNoBPM();
+  salvar();
   render();
 }
 
-function celula(i,campo,readonly=false){
-  let valor = dados[i][campo] || "";
-
-  return `<td>
-    <input value="${valor}"
-    ${!podeEditar(campo)||readonly?"disabled":""}
-    onchange="update(${i},'${campo}',this.value)">
-  </td>`;
-}
-
-// ===== RENDER
+// ===== RENDER =====
 function render(){
 
+  let cols = colunas();
+
+  // CABEÇALHO
+  let head = cols.map(c=>`<th>${c.t}</th>`).join("");
+  document.getElementById("cabecalho").innerHTML = head;
+
+  // GRID
   let html = "";
 
-  dados.forEach((item,i)=>{
+  dados.forEach((r,i)=>{
 
     html += "<tr>";
 
-    html += celula(i,"codigo");
-    html += celula(i,"descricao");
-    html += celula(i,"qtd");
-    html += celula(i,"prazo_pcp");
+    cols.forEach(col=>{
 
-    if(!ocultar("compras")){
-      html += celula(i,"preco_compras");
-      html += celula(i,"prazo_compras");
-    }
+      if(col.c==="acao"){
+        html += `<td><button onclick="remover(${i})">X</button></td>`;
+      }
+      else if(col.c==="aprovado"){
+        html += `<td>
+        <input type="checkbox" ${r.aprovado?"checked":""}
+        onchange="update(${i},'aprovado',this.checked)">
+        </td>`;
+      }
+      else{
+        let val = r[col.c] || "";
 
-    if(!ocultar("comex")){
-      html += celula(i,"preco_comex");
-      html += celula(i,"prazo_comex");
-    }
+        html += `<td>
+        <input value="${val}"
+        ${!podeEditar(col.c)?"disabled":""}
+        onchange="update(${i},'${col.c}',this.value)">
+        </td>`;
+      }
 
-    html += celula(i,"melhor_preco", true);
-
-    html += `<td>
-      <input type="checkbox"
-      ${item.aprovado ? "checked" : ""}
-      ${!podeEditar("aprovado") ? "disabled" : ""}
-      onchange="update(${i},'aprovado',this.checked)">
-    </td>`;
-
-    html += `<td><button onclick="removeLinha(${i})">X</button></td>`;
+    });
 
     html += "</tr>";
   });
@@ -255,8 +210,8 @@ function render(){
   document.getElementById("grid").innerHTML = html;
 }
 
-// ===== INICIALIZAÇÃO
-carregarDoBPM();
+// ===== INIT =====
+carregar();
 render();
 
 </script>
