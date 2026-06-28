@@ -62,7 +62,7 @@ button {
 let perfil = "pcp";
 
 try {
-  let tarefa = parent?.WCMAPI?.task?.description || "";
+  let tarefa = parent.WCMAPI?.task?.description || "";
 
   if(tarefa.toLowerCase().includes("compras")) perfil = "compras";
   else if(tarefa.toLowerCase().includes("comex")) perfil = "comex";
@@ -76,7 +76,7 @@ try {
 let dados = [];
 
 // =======================
-// SALVAR (CRÍTICO)
+// SALVAR (FINAL)
 // =======================
 function salvar(){
 
@@ -85,19 +85,23 @@ function salvar(){
   // salva local
   localStorage.setItem("grid_dados", json);
 
-  // salva no campo BPM automaticamente
+  // =========================
+  // ENVIA PARA O FORMULÁRIO
+  // =========================
   try{
-    let campo = parent.document.querySelector('[name="grid_dados"]');
+
+    // tenta por getElementsByName (mais compatível)
+    let campo = parent.document.getElementsByName("grid_dados")[0];
 
     if(campo){
       campo.value = json;
 
-      // força o Senior reconhecer mudança
-      campo.dispatchEvent(new Event('change'));
+      // dispara evento para o Senior reconhecer alteração
+      campo.dispatchEvent(new Event("change"));
     }
 
   }catch(e){
-    console.log("Erro ao enviar para BPM");
+    console.log("Erro ao enviar para campo BPM");
   }
 }
 
@@ -119,7 +123,7 @@ function carregar(){
 function carregarDoBPM(){
 
   try{
-    let campo = parent.document.querySelector('[name="grid_dados"]');
+    let campo = parent.document.getElementsByName("grid_dados")[0];
 
     if(campo && campo.value){
       dados = JSON.parse(campo.value);
@@ -169,7 +173,7 @@ function podeEditar(c){
 }
 
 // =======================
-// ADD
+// ADICIONAR
 // =======================
 function addLinha(){
   dados.push({});
