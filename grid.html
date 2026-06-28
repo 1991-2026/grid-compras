@@ -5,91 +5,245 @@
 <title>Grid Compras</title>
 
 <style>
-body {
-  font-family: Arial;
-  padding: 20px;
-}
+body { font-family: Arial; padding: 20px; }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+table { width: 100%; border-collapse: collapse; }
 
 th, td {
   border: 1px solid #ccc;
-  padding: 8px;
+  padding: 6px;
+  text-align: center;
 }
 
-th {
-  background: #f2f2f2;
+th { background: #eee; }
+
+.pcp { background: #d9edf7; }
+.compras { background: #dff0d8; }
+.comex { background: #f2dede; }
+.ctrl { background: #fcf8e3; }
+
+input {
+  width: 100%;
+  border: none;
+  text-align: center;
 }
 
 button {
   padding: 6px 10px;
-  margin: 5px;
   cursor: pointer;
 }
 
 .add {
+  margin-top: 10px;
   background: #2e6da4;
   color: white;
   border: none;
 }
 </style>
+
 </head>
 
 <body>
 
 <h2>Itens de Cotação</h2>
 
-<table id="grid">
-  <thead>
-    <tr>
-      <th>Código</th>
-      <th>Descrição</th>
-      <th>Quantidade</th>
-      <th>Prazo</th>
-      <th>Ação</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
+<table>
+<thead>
+<tr>
+  <th class="pcp">Código</th>
+  <th class="pcp">Descrição</th>
+  <th class="pcp">Qtd</th>
+  <th class="pcp">Prazo PCP</th>
+
+  <th class="compras">Preço Compras</th>
+  <th class="compras">Prazo Compras</th>
+
+  <th class="comex">Preço COMEX</th>
+  <th class="comex">Prazo COMEX</th>
+
+  <th class="ctrl">Melhor Preço</th>
+  <th class="ctrl">Aprovar</th>
+
+  <th>Ação</th>
+</tr>
+</thead>
+
+<tbody id="grid"></tbody>
 </table>
 
-<button class="add" onclick="addRow()">+ Adicionar linha</button>
+<button class="add" onclick="addLinha()">+ Adicionar linha</button>
 
 <script>
-let data = [];
 
-function addRow() {
-  data.push({codigo:'', descricao:'', quantidade:'', prazo:''});
-  render();
-}
+// PERFIL
+const params = new URLSearchParams(window.location.search);
+let perfil = params.get("perfil") || "pcp";
 
-function removeRow(i) {
-  data.splice(i, 1);
-  render();
-}
+// DADOS
+let dados = [];
+let produtos = [];
 
-function update(i, campo, valor) {
-  data[i][campo] = valor;
-}
+// CARREGAR CSV (COM SUPORTE ; E ,)
+fetch("PRODUTOS.csv")
+  .then(res => res.text())
+  .then(text => {
 
-function render() {
-  const body = document.querySelector("#grid tbody");
-  body.innerHTML = "";
+    let linhas = text.split(/\r?\n/);
 
-  data.forEach((item, i) => {
-    body.innerHTML += `
-      <tr>
-        <td><input value="${item.codigo}" onchange="update(${i}, 'codigo', this.value)"></td>
-        <td><input value="${item.descricao}" onchange="update(${i}, 'descricao', this.value)"></td>
-        <td><input type="number" value="${item.quantidade}" onchange="update(${i}, 'quantidade', this.value)"></td>
-        <td><input value="${item.prazo}" onchange="update(${i}, 'prazo', this.value)"></td>
-        <td><button onclick="removeRow(${i})">X</button></td>
-      </tr>
-    `;
+    linhas.forEach((linha, i) => {
+
+      if(i === 0 || linha.trim() === "") return;
+
+      let separador = linha.includes(";") ? ";" : ",";
+      let colunas = linha.split(separador);
+
+      produtos.push({
+        codigo: colunas[0]?.trim(),
+        descricao: colunas[1]?.trim()
+      });
+
+    });
+
+    console.log("Produtos carregados:", produtos);
+
   });
+
+// ADICIONAR LINHA
+function addLinha(){
+  dados.push({
+    codigo:"",
+    descricao:"",
+    qtd:"",
+    prazo_pcp:"",
+    preco_compras:"",
+    prazo_compras:"",
+    preco_comex:"",
+    prazo_comex:"",
+    melhor_preco:"",
+    aprovado:false
+  });
+
+  render();
 }
+
+// CONTROLE DE EDIÇÃO
+function podeEditar(campo){
+
+  if(perfil === "pcp"){
+    return ["codigo","descricao","qtd","prazo_pcp"].includes(campo);
+  }
+
+  if(perfil === "compras"){
+    return ["preco_compras","prazo_compras"].includes(campo);
+  }
+
+  if(perfil === "comex"){
+    return ["preco_comex","prazo_comex"].includes(campo);
+  }
+
+  if(perfil === "controladoria"){
+    return ["melhor_preco","aprovado"].includes(campo);
+  }
+
+  return false;
+}
+
+// OCULTAR CAMPOS
+function ocultarCampo(campo){
+  if(perfil === "compras" && campo.includes("comex")) return true;
+  if(perfil === "comex" && campo.includes("compras")) return true;
+  return false;
+}
+
+// ATUALIZAR
+function update(i,campo,valor){
+
+  dados[i][campo] = valor;
+
+  // AUTO DESCRIÇÃO
+  if(campo === "codigo"){
+
+    let encontrado = produtos.find(p => p.codigo == valor);
+
+    if(encontrado){
+      dados[i].descricao = encontrado.descricao;
+    } else {
+      dados[i].descricao = "";
+    }
+  }
+
+  // MELHOR PREÇO
+  let c = parseFloat(dados[i].preco_compras || 999999);
+  let x = parseFloat(dados[i].preco_comex || 999999);
+
+  dados[i].melhor_preco = Math.min(c, x);
+
+  render();
+}
+
+// REMOVER LINHA
+function removeLinha(i){
+  dados.splice(i,1);
+  render();
+}
+
+// CRIAR CÉLULA
+function celula(i,campo,readonly=false){
+
+  let valor = dados[i][campo] || "";
+
+  return `
+  <td>
+    <input value="${valor}"
+      ${!podeEditar(campo) || readonly ? "disabled" : ""}
+      onchange="update(${i},'${campo}',this.value)">
+  </td>`;
+}
+
+// RENDERIZAR
+function render(){
+
+  let html = "";
+
+  dados.forEach((item,i)=>{
+
+    html += "<tr>";
+
+    html += celula(i,"codigo");
+    html += celula(i,"descricao");
+    html += celula(i,"qtd");
+    html += celula(i,"prazo_pcp");
+
+    if(!ocultarCampo("compras")){
+      html += celula(i,"preco_compras");
+      html += celula(i,"prazo_compras");
+    }
+
+    if(!ocultarCampo("comex")){
+      html += celula(i,"preco_comex");
+      html += celula(i,"prazo_comex");
+    }
+
+    html += celula(i,"melhor_preco", true);
+
+    html += `
+    <td>
+      <input type="checkbox"
+        ${item.aprovado ? "checked" : ""}
+        ${!podeEditar("aprovado") ? "disabled" : ""}
+        onchange="update(${i},'aprovado',this.checked)">
+    </td>`;
+
+    html += `<td><button onclick="removeLinha(${i})">X</button></td>`;
+
+    html += "</tr>";
+  });
+
+  document.getElementById("grid").innerHTML = html;
+}
+
+render();
+
 </script>
 
 </body>
