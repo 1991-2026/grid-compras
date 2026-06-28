@@ -17,11 +17,6 @@ th, td {
 
 th { background: #eee; }
 
-.pcp { background: #d9edf7; }
-.compras { background: #dff0d8; }
-.comex { background: #f2dede; }
-.ctrl { background: #fcf8e3; }
-
 input { width: 100%; border: none; text-align: center; }
 
 button {
@@ -36,6 +31,7 @@ button {
   border: none;
 }
 </style>
+
 </head>
 
 <body>
@@ -53,15 +49,15 @@ button {
 
 <script>
 
-// ===== PERFIL =====
+// PERFIL
 const params = new URLSearchParams(window.location.search);
 let perfil = params.get("perfil") || "pcp";
 
-// ===== DADOS =====
+// DADOS
 let dados = [];
 let produtos = [];
 
-// ===== LOCAL STORAGE =====
+// SALVAR LOCAL
 function salvar(){
   localStorage.setItem("grid_dados", JSON.stringify(dados));
 }
@@ -73,7 +69,7 @@ function carregar(){
   }
 }
 
-// ===== CSV =====
+// CSV
 fetch("PRODUTOS.csv")
 .then(r => r.text())
 .then(text => {
@@ -89,7 +85,7 @@ fetch("PRODUTOS.csv")
   });
 });
 
-// ===== COLUNAS DINÂMICAS =====
+// COLUNAS
 function colunas(){
 
   let cols = [];
@@ -114,7 +110,7 @@ function colunas(){
   if(perfil === "controladoria"){
     cols.push({c:"preco_compras", t:"Preço Compras"});
     cols.push({c:"preco_comex", t:"Preço COMEX"});
-    cols.push({c:"melhor_preco", t:"Melhor"});
+    cols.push({c:"melhor_preco", t:"Melhor Preço"});
     cols.push({c:"aprovado", t:"Aprovar"});
   }
 
@@ -123,7 +119,7 @@ function colunas(){
   return cols;
 }
 
-// ===== EDITAR =====
+// PERMISSÃO
 function podeEditar(c){
   if(perfil==="pcp") return ["codigo","descricao","qtd","prazo_pcp"].includes(c);
   if(perfil==="compras") return c.includes("compras");
@@ -132,25 +128,25 @@ function podeEditar(c){
   return false;
 }
 
-// ===== ADD =====
+// ADICIONAR LINHA
 function addLinha(){
   dados.push({});
   salvar();
   render();
 }
 
-// ===== UPDATE =====
+// ATUALIZAR
 function update(i,c,v){
 
   dados[i][c] = v;
 
   if(c==="codigo"){
-    let p = produtos.find(x=>x.codigo==v);
+    let p = produtos.find(x => x.codigo == v);
     dados[i].descricao = p ? p.descricao : "";
   }
 
-  let c1 = parseFloat(dados[i].preco_compras||999999);
-  let c2 = parseFloat(dados[i].preco_comex||999999);
+  let c1 = parseFloat(dados[i].preco_compras || 999999);
+  let c2 = parseFloat(dados[i].preco_comex || 999999);
 
   dados[i].melhor_preco = Math.min(c1,c2);
 
@@ -158,23 +154,22 @@ function update(i,c,v){
   render();
 }
 
-// ===== REMOVE =====
+// REMOVER
 function remover(i){
   dados.splice(i,1);
   salvar();
   render();
 }
 
-// ===== RENDER =====
+// RENDER
 function render(){
 
   let cols = colunas();
 
-  // CABEÇALHO
-  let head = cols.map(c=>`<th>${c.t}</th>`).join("");
+  // cabeçalho
+  let head = cols.map(c => `<th>${c.t}</th>`).join("");
   document.getElementById("cabecalho").innerHTML = head;
 
-  // GRID
   let html = "";
 
   dados.forEach((r,i)=>{
@@ -186,19 +181,21 @@ function render(){
       if(col.c==="acao"){
         html += `<td><button onclick="remover(${i})">X</button></td>`;
       }
+
       else if(col.c==="aprovado"){
         html += `<td>
-        <input type="checkbox" ${r.aprovado?"checked":""}
-        onchange="update(${i},'aprovado',this.checked)">
+          <input type="checkbox" ${r.aprovado?"checked":""}
+          onchange="update(${i},'aprovado',this.checked)">
         </td>`;
       }
+
       else{
         let val = r[col.c] || "";
 
         html += `<td>
-        <input value="${val}"
-        ${!podeEditar(col.c)?"disabled":""}
-        onchange="update(${i},'${col.c}',this.value)">
+          <input value="${val}"
+          ${!podeEditar(col.c)?"disabled":""}
+          onchange="update(${i},'${col.c}',this.value)">
         </td>`;
       }
 
@@ -210,7 +207,7 @@ function render(){
   document.getElementById("grid").innerHTML = html;
 }
 
-// ===== INIT =====
+// INICIAR
 carregar();
 render();
 
