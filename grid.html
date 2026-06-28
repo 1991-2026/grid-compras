@@ -36,7 +36,7 @@ button {
 
 <body>
 
-<h2>Itens de Cotação</h2>
+<h2>Itens de Cotação ✅</h2>
 
 <table>
 <thead>
@@ -49,35 +49,78 @@ button {
 
 <script>
 
+// =======================
 // PERFIL
+// =======================
 const params = new URLSearchParams(window.location.search);
 let perfil = params.get("perfil") || "pcp";
 
+// =======================
 // DADOS
+// =======================
 let dados = [];
 let produtos = [];
 
-// ===== SALVAR LOCAL
+// =======================
+// SALVAR (WCMAPI + LOCAL)
+// =======================
 function salvar(){
-  localStorage.setItem("grid_dados", JSON.stringify(dados));
+
+  let json = JSON.stringify(dados);
+
+  // salva no navegador (backup)
+  localStorage.setItem("grid_dados", json);
+
+  // tenta salvar no BPM
+  try{
+    if (parent && parent.WCMAPI && parent.WCMAPI.form){
+      parent.WCMAPI.form.setValue("grid_dados", json);
+    }
+  }catch(e){
+    console.log("WCMAPI não disponível");
+  }
 }
 
+// =======================
+// CARREGAR DADOS
+// =======================
 function carregar(){
-  let json = localStorage.getItem("grid_dados");
+
+  let json = "";
+
+  // tenta carregar do BPM
+  try{
+    if (parent && parent.WCMAPI && parent.WCMAPI.form){
+      json = parent.WCMAPI.form.getValue("grid_dados");
+    }
+  }catch(e){
+    console.log("Erro WCMAPI");
+  }
+
+  // fallback para localStorage
+  if(!json){
+    json = localStorage.getItem("grid_dados");
+  }
+
   if(json){
     dados = JSON.parse(json);
   }
 }
 
-// ===== CSV
+// =======================
+// CARREGAR CSV
+// =======================
 fetch("PRODUTOS.csv")
 .then(r => r.text())
-.then(text => {
+.then(text=>{
   let linhas = text.split(/\r?\n/);
+
   linhas.forEach((l,i)=>{
     if(i===0 || !l.trim()) return;
+
     let sep = l.includes(";") ? ";" : ",";
     let c = l.split(sep);
+
     produtos.push({
       codigo: c[0].trim(),
       descricao: c[1].trim()
@@ -85,12 +128,13 @@ fetch("PRODUTOS.csv")
   });
 });
 
-// ===== COLUNAS POR PERFIL
+// =======================
+// COLUNAS
+// =======================
 function colunas(){
 
   let cols = [];
 
-  // PCP e áreas operacionais veem base
   if(perfil !== "controladoria"){
     cols.push({c:"codigo", t:"Código"});
     cols.push({c:"descricao", t:"Descrição"});
@@ -108,7 +152,6 @@ function colunas(){
     cols.push({c:"prazo_comex", t:"Prazo COMEX"});
   }
 
-  // Controladoria NÃO vê PCP
   if(perfil === "controladoria"){
     cols.push({c:"preco_compras", t:"Preço Compras"});
     cols.push({c:"preco_comex", t:"Preço COMEX"});
@@ -121,34 +164,53 @@ function colunas(){
   return cols;
 }
 
-// ===== CONTROLE EDIÇÃO
+// =======================
+// PERMISSÃO
+// =======================
 function podeEditar(c){
-  if(perfil==="pcp") return ["codigo","descricao","qtd","prazo_pcp"].includes(c);
-  if(perfil==="compras") return c.includes("compras");
-  if(perfil==="comex") return c.includes("comex");
-  if(perfil==="controladoria") return ["aprovado"].includes(c);
+
+  if(perfil==="pcp"){
+    return ["codigo","descricao","qtd","prazo_pcp"].includes(c);
+  }
+
+  if(perfil==="compras"){
+    return c.includes("compras");
+  }
+
+  if(perfil==="comex"){
+    return c.includes("comex");
+  }
+
+  if(perfil==="controladoria"){
+    return ["aprovado"].includes(c);
+  }
+
   return false;
 }
 
-// ===== ADICIONAR LINHA
+// =======================
+// ADD
+// =======================
 function addLinha(){
   dados.push({});
   salvar();
   render();
 }
 
-// ===== ATUALIZAR
+// =======================
+// UPDATE
+// =======================
 function update(i,c,v){
 
   dados[i][c] = v;
 
-  // descrição automática
+  // auto descrição
   if(c==="codigo"){
     let p = produtos.find(x => x.codigo == v);
     dados[i].descricao = p ? p.descricao : "";
   }
 
-  // melhor preço automático
+  // melhor preço
   let c1 = parseFloat(dados[i].preco_compras || 999999);
   let c2 = parseFloat(dados[i].preco_comex || 999999);
 
@@ -158,19 +220,22 @@ function update(i,c,v){
   render();
 }
 
-// ===== REMOVER
+// =======================
+// REMOVE
+// =======================
 function remover(i){
   dados.splice(i,1);
   salvar();
   render();
 }
 
-// ===== RENDER
+// =======================
+// RENDER
+// =======================
 function render(){
 
   let cols = colunas();
 
-  // Cabeçalho
   let head = cols.map(c => `<th>${c.t}</th>`).join("");
   document.getElementById("cabecalho").innerHTML = head;
 
@@ -198,7 +263,7 @@ function render(){
 
         html += `<td>
           <input value="${val}"
-          ${!podeEditar(col.c)?"disabled":""}
+          ${!podeEditar(col.c) ? "disabled" : ""}
           onchange="update(${i},'${col.c}',this.value)">
         </td>`;
       }
@@ -211,7 +276,9 @@ function render(){
   document.getElementById("grid").innerHTML = html;
 }
 
-// ===== INICIAR
+// =======================
+// INIT
+// =======================
 carregar();
 render();
 
