@@ -75,48 +75,56 @@ button {
 
 <script>
 
-// ===== PERFIL =====
+// ===== PERFIL
 const params = new URLSearchParams(window.location.search);
 let perfil = params.get("perfil") || "pcp";
 
-// ===== DADOS =====
+// ===== DADOS
 let dados = [];
 let produtos = [];
 
-// ===== INTEGRAÇÃO BPM =====
+// ===== CONEXÃO SENIOR X (CORRETA)
 function getCampoBPM(nome){
   try{
-    let campo = window.parent.document.querySelector(`[name='${nome}']`);
-    return campo ? campo.value : "";
-  }catch(e){ return ""; }
+    if (parent && parent.WCMAPI && parent.WCMAPI.form){
+      return parent.WCMAPI.form.getValue(nome);
+    }
+  }catch(e){
+    console.error("Erro ao ler BPM:", e);
+  }
+  return "";
 }
 
 function setCampoBPM(nome, valor){
   try{
-    let campo = window.parent.document.querySelector(`[name='${nome}']`);
-    if(campo){
-      campo.value = valor;
-      campo.dispatchEvent(new Event('change'));
+    if (parent && parent.WCMAPI && parent.WCMAPI.form){
+      parent.WCMAPI.form.setValue(nome, valor);
     }
-  }catch(e){}
-}
-
-// ===== CARREGAR DO BPM =====
-function carregarDoBPM(){
-  let json = getCampoBPM("grid_dados");
-  if(json){
-    try{
-      dados = JSON.parse(json);
-    }catch(e){}
+  }catch(e){
+    console.error("Erro ao salvar BPM:", e);
   }
 }
 
-// ===== SALVAR NO BPM =====
-function salvarNoBPM(){
-  setCampoBPM("grid_dados", JSON.stringify(dados));
+// ===== CARREGAR DADOS DO BPM
+function carregarDoBPM(){
+  let json = getCampoBPM("grid_dados");
+
+  if(json && json !== ""){
+    try{
+      dados = JSON.parse(json);
+    }catch(e){
+      console.error("Erro ao converter JSON:", e);
+    }
+  }
 }
 
-// ===== CSV =====
+// ===== SALVAR AUTOMATICAMENTE
+function salvarNoBPM(){
+  let json = JSON.stringify(dados);
+  setCampoBPM("grid_dados", json);
+}
+
+// ===== CARREGAR CSV
 fetch("PRODUTOS.csv")
 .then(res => res.text())
 .then(text => {
@@ -124,6 +132,7 @@ fetch("PRODUTOS.csv")
   let linhas = text.split(/\r?\n/);
 
   linhas.forEach((linha, i) => {
+
     if(i === 0 || linha.trim() === "") return;
 
     let sep = linha.includes(";") ? ";" : ",";
@@ -133,10 +142,11 @@ fetch("PRODUTOS.csv")
       codigo: col[0]?.trim(),
       descricao: col[1]?.trim()
     });
+
   });
 });
 
-// ===== FUNÇÕES =====
+// ===== FUNÇÕES DO GRID
 function addLinha(){
   dados.push({
     codigo:"",
@@ -155,7 +165,6 @@ function addLinha(){
   render();
 }
 
-// ===== CONTROLE =====
 function podeEditar(campo){
   if(perfil==="pcp") return ["codigo","descricao","qtd","prazo_pcp"].includes(campo);
   if(perfil==="compras") return ["preco_compras","prazo_compras"].includes(campo);
@@ -170,47 +179,45 @@ function ocultar(campo){
   return false;
 }
 
-// ===== UPDATE =====
 function update(i,campo,valor){
 
   dados[i][campo] = valor;
 
   // descrição automática
-  if(campo==="codigo"){
-    let p = produtos.find(x=>x.codigo==valor);
+  if(campo === "codigo"){
+    let p = produtos.find(x => x.codigo == valor);
     dados[i].descricao = p ? p.descricao : "";
   }
 
   // melhor preço
   let c = parseFloat(dados[i].preco_compras || 999999);
   let x = parseFloat(dados[i].preco_comex || 999999);
-  dados[i].melhor_preco = Math.min(c,x);
+  dados[i].melhor_preco = Math.min(c, x);
 
   salvarNoBPM();
   render();
 }
 
-// ===== REMOVER =====
 function removeLinha(i){
   dados.splice(i,1);
   salvarNoBPM();
   render();
 }
 
-// ===== CELULA =====
 function celula(i,campo,readonly=false){
-  let v = dados[i][campo] || "";
+  let valor = dados[i][campo] || "";
+
   return `<td>
-    <input value="${v}"
+    <input value="${valor}"
     ${!podeEditar(campo)||readonly?"disabled":""}
-    onchange="update(${i},"${campo}",this.value)">
+    onchange="update(${i},'${campo}',this.value)">
   </td>`;
 }
 
-// ===== RENDER =====
+// ===== RENDER
 function render(){
 
-  let html="";
+  let html = "";
 
   dados.forEach((item,i)=>{
 
@@ -231,13 +238,13 @@ function render(){
       html += celula(i,"prazo_comex");
     }
 
-    html += celula(i,"melhor_preco",true);
+    html += celula(i,"melhor_preco", true);
 
     html += `<td>
       <input type="checkbox"
-      ${item.aprovado?"checked":""}
-      ${!podeEditar("aprovado")?"disabled":""}
-      onchange="update(${i},"aprovado",this.checked)">
+      ${item.aprovado ? "checked" : ""}
+      ${!podeEditar("aprovado") ? "disabled" : ""}
+      onchange="update(${i},'aprovado',this.checked)">
     </td>`;
 
     html += `<td><button onclick="removeLinha(${i})">X</button></td>`;
@@ -248,7 +255,7 @@ function render(){
   document.getElementById("grid").innerHTML = html;
 }
 
-// ===== INIT =====
+// ===== INICIALIZAÇÃO
 carregarDoBPM();
 render();
 
