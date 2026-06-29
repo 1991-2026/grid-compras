@@ -2,23 +2,18 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Grid Compras</title>
 
 <style>
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 10px;
+body {
   font-family: Arial;
-  box-sizing: border-box;
-  overflow: auto;
+  padding: 10px;
 }
 
 h2 {
   margin-top: 0;
 }
 
-.table-container {
+.container {
   width: 100%;
   overflow-x: auto;
 }
@@ -35,15 +30,12 @@ th, td {
   text-align: center;
 }
 
-th { 
-  background: #eee; 
-}
+th { background: #eee; }
 
 input {
   width: 100%;
   border: none;
   text-align: center;
-  box-sizing: border-box;
 }
 
 button {
@@ -52,28 +44,26 @@ button {
 }
 
 .add {
-  margin-top: 15px;
+  margin-top: 10px;
   background: #2e6da4;
   color: white;
   border: none;
   display: block;
 }
-
 </style>
-
 </head>
 
 <body>
 
 <h2>Itens de Cotação</h2>
 
-<div class="table-container">
-  <table>
-    <thead>
-      <tr id="cabecalho"></tr>
-    </thead>
-    <tbody id="grid"></tbody>
-  </table>
+<div class="container">
+<table>
+<thead>
+<tr id="cabecalho"></tr>
+</thead>
+<tbody id="grid"></tbody>
+</table>
 </div>
 
 <button class="add" onclick="addLinha()">+ Adicionar linha</button>
@@ -81,7 +71,7 @@ button {
 <script>
 
 // =======================
-// DETECTAR ETAPA
+// PERFIL (ETAPA)
 // =======================
 let perfil = "pcp";
 
@@ -100,13 +90,26 @@ try {
 let dados = [];
 
 // =======================
-// SALVAR BPM + LOCAL
+// CARREGAR DO BPM
+// =======================
+function carregar(){
+
+  try{
+    let campo = parent.document.getElementsByName("grid_dados")[0];
+
+    if(campo && campo.value){
+      dados = JSON.parse(campo.value);
+    }
+
+  }catch(e){}
+}
+
+// =======================
+// SALVAR NO BPM
 // =======================
 function salvar(){
 
   let json = JSON.stringify(dados);
-
-  localStorage.setItem("grid_dados", json);
 
   try{
     let campo = parent.document.getElementsByName("grid_dados")[0];
@@ -120,43 +123,11 @@ function salvar(){
 }
 
 // =======================
-// CARREGAR
-// =======================
-function carregar(){
-
-  let json = localStorage.getItem("grid_dados");
-
-  if(json){
-    dados = JSON.parse(json);
-  }
-}
-
-// =======================
-// CARREGAR DO BPM
-// =======================
-function carregarDoBPM(){
-
-  try{
-    let campo = parent.document.getElementsByName("grid_dados")[0];
-
-    if(campo && campo.value){
-      dados = JSON.parse(campo.value);
-      localStorage.setItem("grid_dados", campo.value);
-    }
-
-  }catch(e){}
-}
-
-// =======================
 // COLUNAS
 // =======================
 function colunas(){
 
-  let cols = [];
-
-  if(perfil !== "controladoria"){
-    cols.push("codigo","descricao","qtd","prazo");
-  }
+  let cols = ["codigo","descricao","qtd","prazo"];
 
   if(perfil === "compras"){
     cols.push("preco_compras","prazo_compras");
@@ -187,7 +158,7 @@ function podeEditar(c){
 }
 
 // =======================
-// ADICIONAR
+// AÇÕES
 // =======================
 function addLinha(){
   dados.push({});
@@ -195,9 +166,6 @@ function addLinha(){
   render();
 }
 
-// =======================
-// UPDATE
-// =======================
 function update(i,c,v){
 
   dados[i][c] = v;
@@ -208,7 +176,6 @@ function update(i,c,v){
   dados[i].melhor = Math.min(c1,c2);
 
   salvar();
-  render();
 }
 
 // =======================
@@ -240,8 +207,8 @@ function render(){
     aprovado:"Aprovar"
   };
 
-  let head = cols.map(c => `<th>${nomes[c]}</th>`).join("") + "<th>Ação</th>";
-  document.getElementById("cabecalho").innerHTML = head;
+  document.getElementById("cabecalho").innerHTML =
+    cols.map(c => `<th>${nomes[c]}</th>`).join("") + "<th>Ação</th>";
 
   let html = "";
 
@@ -263,7 +230,7 @@ function render(){
         html += `<td>
         <input value="${val}"
         ${!podeEditar(c) ? "disabled" : ""}
-        onchange="update(${i},'${c}',this.value)">
+        oninput="update(${i},'${c}',this.value)">
         </td>`;
       }
 
@@ -277,16 +244,30 @@ function render(){
 }
 
 // =======================
+// FORÇAR SALVAR AO ENVIAR
+// =======================
+document.addEventListener("click", function(e){
+
+  let texto = (e.target.innerText || "").toLowerCase();
+
+  if(texto.includes("enviar")){
+    try{
+      let campo = parent.document.getElementsByName("grid_dados")[0];
+
+      if(campo){
+        campo.value = JSON.stringify(dados);
+        campo.dispatchEvent(new Event("change"));
+      }
+    }catch(err){}
+  }
+
+});
+
+// =======================
 // INIT
 // =======================
 carregar();
-carregarDoBPM();
 render();
-
-// força ajuste altura no Senior
-setTimeout(() => {
-  document.body.style.height = "auto";
-}, 300);
 
 </script>
 
