@@ -9,9 +9,7 @@ body {
   padding: 10px;
 }
 
-h2 {
-  margin-top: 0;
-}
+h2 { margin-top: 0; }
 
 .container {
   width: 100%;
@@ -21,7 +19,7 @@ h2 {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 800px;
 }
 
 th, td {
@@ -48,9 +46,9 @@ button {
   background: #2e6da4;
   color: white;
   border: none;
-  display: block;
 }
 </style>
+
 </head>
 
 <body>
@@ -71,55 +69,70 @@ button {
 <script>
 
 // =======================
-// PERFIL (ETAPA)
+// VARIÁVEIS
 // =======================
 let perfil = "pcp";
-
-try {
-  let tarefa = parent.WCMAPI?.task?.description || "";
-
-  if(tarefa.toLowerCase().includes("compras")) perfil = "compras";
-  else if(tarefa.toLowerCase().includes("comex")) perfil = "comex";
-  else if(tarefa.toLowerCase().includes("control")) perfil = "controladoria";
-
-} catch(e){}
-
-// =======================
-// DADOS
-// =======================
 let dados = [];
 
 // =======================
-// CARREGAR DO BPM
+// DETECTAR PERFIL (PROTEGIDO)
+// =======================
+try {
+  if (window.parent && window.parent.WCMAPI?.task?.description) {
+    let tarefa = window.parent.WCMAPI.task.description.toLowerCase();
+
+    if(tarefa.includes("compras")) perfil = "compras";
+    else if(tarefa.includes("comex")) perfil = "comex";
+    else if(tarefa.includes("control")) perfil = "controladoria";
+  }
+} catch(e){}
+
+// =======================
+// PEGAR CAMPO BPM COM SEGURANÇA
+// =======================
+function getCampo(){
+  try{
+    if(window.parent && window.parent.document){
+      return window.parent.document.getElementsByName("grid_dados")[0];
+    }
+  }catch(e){}
+  return null;
+}
+
+// =======================
+// CARREGAR DADOS
 // =======================
 function carregar(){
 
   try{
-    let campo = parent.document.getElementsByName("grid_dados")[0];
+    let campo = getCampo();
 
     if(campo && campo.value){
       dados = JSON.parse(campo.value);
     }
+  }catch(e){
+    console.log("Erro ao carregar", e);
+    dados = [];
+  }
 
-  }catch(e){}
 }
 
 // =======================
-// SALVAR NO BPM
+// SALVAR DADOS
 // =======================
 function salvar(){
 
-  let json = JSON.stringify(dados);
-
   try{
-    let campo = parent.document.getElementsByName("grid_dados")[0];
+    let campo = getCampo();
 
     if(campo){
-      campo.value = json;
+      campo.value = JSON.stringify(dados);
       campo.dispatchEvent(new Event("change"));
     }
+  }catch(e){
+    console.log("Erro ao salvar", e);
+  }
 
-  }catch(e){}
 }
 
 // =======================
@@ -178,9 +191,6 @@ function update(i,c,v){
   salvar();
 }
 
-// =======================
-// REMOVER
-// =======================
 function remover(i){
   dados.splice(i,1);
   salvar();
@@ -244,30 +254,25 @@ function render(){
 }
 
 // =======================
-// FORÇAR SALVAR AO ENVIAR
+// FORÇA SALVAR AO ENVIAR
 // =======================
 document.addEventListener("click", function(e){
 
   let texto = (e.target.innerText || "").toLowerCase();
 
   if(texto.includes("enviar")){
-    try{
-      let campo = parent.document.getElementsByName("grid_dados")[0];
-
-      if(campo){
-        campo.value = JSON.stringify(dados);
-        campo.dispatchEvent(new Event("change"));
-      }
-    }catch(err){}
+    salvar();
   }
 
 });
 
 // =======================
-// INIT
+// INIT SEGURO
 // =======================
-carregar();
-render();
+window.onload = function(){
+  carregar();
+  render();
+};
 
 </script>
 
