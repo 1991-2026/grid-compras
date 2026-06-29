@@ -5,11 +5,28 @@
 <title>Grid Compras</title>
 
 <style>
-body { font-family: Arial; padding: 20px; }
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 10px;
+  font-family: Arial;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
 
 table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 900px;
 }
 
 th, td {
@@ -18,12 +35,15 @@ th, td {
   text-align: center;
 }
 
-th { background: #eee; }
+th { 
+  background: #eee; 
+}
 
 input {
   width: 100%;
   border: none;
   text-align: center;
+  box-sizing: border-box;
 }
 
 button {
@@ -32,11 +52,13 @@ button {
 }
 
 .add {
-  margin-top: 10px;
+  margin-top: 15px;
   background: #2e6da4;
   color: white;
   border: none;
+  display: block;
 }
+
 </style>
 
 </head>
@@ -45,19 +67,21 @@ button {
 
 <h2>Itens de Cotação</h2>
 
-<table>
-<thead>
-<tr id="cabecalho"></tr>
-</thead>
-<tbody id="grid"></tbody>
-</table>
+<div class="table-container">
+  <table>
+    <thead>
+      <tr id="cabecalho"></tr>
+    </thead>
+    <tbody id="grid"></tbody>
+  </table>
+</div>
 
 <button class="add" onclick="addLinha()">+ Adicionar linha</button>
 
 <script>
 
 // =======================
-// DETECTAR ETAPA AUTOMÁTICO
+// DETECTAR ETAPA
 // =======================
 let perfil = "pcp";
 
@@ -76,37 +100,27 @@ try {
 let dados = [];
 
 // =======================
-// SALVAR (FINAL)
+// SALVAR BPM + LOCAL
 // =======================
 function salvar(){
 
   let json = JSON.stringify(dados);
 
-  // salva local
   localStorage.setItem("grid_dados", json);
 
-  // =========================
-  // ENVIA PARA O FORMULÁRIO
-  // =========================
   try{
-
-    // tenta por getElementsByName (mais compatível)
     let campo = parent.document.getElementsByName("grid_dados")[0];
 
     if(campo){
       campo.value = json;
-
-      // dispara evento para o Senior reconhecer alteração
       campo.dispatchEvent(new Event("change"));
     }
 
-  }catch(e){
-    console.log("Erro ao enviar para campo BPM");
-  }
+  }catch(e){}
 }
 
 // =======================
-// CARREGAR LOCAL
+// CARREGAR
 // =======================
 function carregar(){
 
@@ -227,7 +241,6 @@ function render(){
   };
 
   let head = cols.map(c => `<th>${nomes[c]}</th>`).join("") + "<th>Ação</th>";
-
   document.getElementById("cabecalho").innerHTML = head;
 
   let html = "";
@@ -268,8 +281,12 @@ function render(){
 // =======================
 carregar();
 carregarDoBPM();
-
 render();
+
+// força ajuste altura no Senior
+setTimeout(() => {
+  document.body.style.height = "auto";
+}, 300);
 
 </script>
 
