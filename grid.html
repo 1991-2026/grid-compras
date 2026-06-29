@@ -4,51 +4,112 @@
 <meta charset="UTF-8">
 
 <style>
-body {
-  font-family: Arial;
-  padding: 10px;
+
+body{
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:#f4f6f9;
+    padding:15px;
 }
 
-h2 { margin-top: 0; }
-
-.container {
-  width: 100%;
-  overflow-x: auto;
+h2{
+    margin-top:0;
+    color:#1f2937;
+    font-size:24px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 800px;
+.container{
+    width:100%;
+    overflow-x:auto;
+    background:white;
+    border-radius:12px;
+    box-shadow:0 3px 12px rgba(0,0,0,.12);
 }
 
-th, td {
-  border: 1px solid #ccc;
-  padding: 6px;
-  text-align: center;
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:2200px;
 }
 
-th { background: #eee; }
-
-input {
-  width: 100%;
-  border: none;
-  text-align: center;
+th{
+    color:white;
+    padding:10px;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.5px;
+    border:1px solid #d1d5db;
 }
 
-button {
-  padding: 6px;
-  cursor: pointer;
+td{
+    border:1px solid #e5e7eb;
+    padding:4px;
 }
 
-.add {
-  margin-top: 10px;
-  background: #2e6da4;
-  color: white;
-  border: none;
+input,
+textarea{
+    width:100%;
+    border:none;
+    padding:6px;
+    background:transparent;
+    font-size:13px;
 }
+
+input:disabled,
+textarea:disabled{
+    background:#f3f4f6;
+    color:#374151;
+}
+
+textarea{
+    min-height:60px;
+    resize:vertical;
+}
+
+button{
+    border:none;
+    padding:8px 12px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.add{
+    margin-top:10px;
+    background:#2563eb;
+    color:white;
+}
+
+.remove{
+    background:#dc2626;
+    color:white;
+}
+
+.pcp{
+    background:#0f4c81;
+}
+
+.compras{
+    background:#15803d;
+}
+
+.comex{
+    background:#c2410c;
+}
+
+.controladoria{
+    background:#6b21a8;
+}
+
+.melhor{
+    background:#dcfce7;
+    font-weight:bold;
+    color:#166534;
+}
+
+.aprovadoLinha{
+    background:#ecfdf5;
+}
+
 </style>
-
 </head>
 
 <body>
@@ -56,222 +117,552 @@ button {
 <h2>Itens de Cotação</h2>
 
 <div class="container">
+
 <table>
+
 <thead>
 <tr id="cabecalho"></tr>
 </thead>
+
 <tbody id="grid"></tbody>
+
 </table>
+
 </div>
 
-<button class="add" onclick="addLinha()">+ Adicionar linha</button>
+<button class="add" onclick="addLinha()">
++ Adicionar linha
+</button>
 
 <script>
 
-// =======================
-// VARIÁVEIS
-// =======================
+//================================
+// PERFIL
+//================================
+
 let perfil = "pcp";
 let dados = [];
 
-// =======================
-// DETECTAR PERFIL (PROTEGIDO)
-// =======================
-try {
-  if (window.parent && window.parent.WCMAPI?.task?.description) {
-    let tarefa = window.parent.WCMAPI.task.description.toLowerCase();
+//================================
+// IDENTIFICA TAREFA
+//================================
 
-    if(tarefa.includes("compras")) perfil = "compras";
-    else if(tarefa.includes("comex")) perfil = "comex";
-    else if(tarefa.includes("control")) perfil = "controladoria";
-  }
-} catch(e){}
+try{
 
-// =======================
-// PEGAR CAMPO BPM COM SEGURANÇA
-// =======================
-function getCampo(){
-  try{
-    if(window.parent && window.parent.document){
-      return window.parent.document.getElementsByName("grid_dados")[0];
+    if(window.parent &&
+       window.parent.WCMAPI &&
+       window.parent.WCMAPI.task){
+
+        let tarefa =
+        window.parent.WCMAPI.task.description.toLowerCase();
+
+        if(tarefa.includes("compras")){
+            perfil="compras";
+        }
+        else if(tarefa.includes("comex")){
+            perfil="comex";
+        }
+        else if(
+            tarefa.includes("control") ||
+            tarefa.includes("finance")
+        ){
+            perfil="controladoria";
+        }
+
     }
-  }catch(e){}
-  return null;
+
+}catch(e){}
+
+//================================
+// CAMPO BPM
+//================================
+
+function getCampo(){
+
+    try{
+
+        return window.parent.document
+        .getElementsByName("grid_dados")[0];
+
+    }catch(e){}
+
+    return null;
 }
 
-// =======================
-// CARREGAR DADOS
-// =======================
+//================================
+// CARREGAR
+//================================
+
 function carregar(){
 
-  try{
-    let campo = getCampo();
+    try{
 
-    if(campo && campo.value){
-      dados = JSON.parse(campo.value);
+        let campo = getCampo();
+
+        if(campo && campo.value){
+
+            dados = JSON.parse(campo.value);
+
+        }
+
+    }catch(e){
+
+        dados=[];
+
     }
-  }catch(e){
-    console.log("Erro ao carregar", e);
-    dados = [];
-  }
 
 }
 
-// =======================
-// SALVAR DADOS
-// =======================
+//================================
+// SALVAR
+//================================
+
 function salvar(){
 
-  try{
-    let campo = getCampo();
+    try{
 
-    if(campo){
-      campo.value = JSON.stringify(dados);
-      campo.dispatchEvent(new Event("change"));
-    }
-  }catch(e){
-    console.log("Erro ao salvar", e);
-  }
+        let campo = getCampo();
+
+        if(campo){
+
+            campo.value =
+            JSON.stringify(dados);
+
+            campo.dispatchEvent(
+                new Event("change")
+            );
+
+        }
+
+    }catch(e){}
 
 }
 
-// =======================
+//================================
+// FORMATAÇÃO
+//================================
+
+function moeda(valor){
+
+    return Number(valor || 0)
+    .toLocaleString(
+        'pt-BR',
+        {
+            style:'currency',
+            currency:'BRL'
+        }
+    );
+
+}
+
+//================================
 // COLUNAS
-// =======================
+//================================
+
 function colunas(){
 
-  let cols = ["codigo","descricao","qtd","prazo"];
+    let cols = [
 
-  if(perfil === "compras"){
-    cols.push("preco_compras","prazo_compras");
-  }
+        "codigo",
+        "descricao",
+        "qtd"
 
-  if(perfil === "comex"){
-    cols.push("preco_comex","prazo_comex");
-  }
+    ];
 
-  if(perfil === "controladoria"){
-    cols.push("preco_compras","preco_comex","melhor","aprovado");
-  }
+    if(perfil==="pcp"){
 
-  return cols;
+        return cols;
+
+    }
+
+    if(perfil==="compras"){
+
+        cols.push(
+            "setor_compras",
+            "fornecedor_compras",
+            "descricao_fornecedor_compras",
+            "preco_compras",
+            "total_compras",
+            "prazo_compras"
+        );
+
+        return cols;
+    }
+
+    if(perfil==="comex"){
+
+        cols.push(
+            "setor_comex",
+            "fornecedor_comex",
+            "descricao_fornecedor_comex",
+            "preco_comex",
+            "total_comex",
+            "prazo_comex"
+        );
+
+        return cols;
+    }
+
+    if(perfil==="controladoria"){
+
+        cols.push(
+
+            "setor_compras",
+            "fornecedor_compras",
+            "descricao_fornecedor_compras",
+            "preco_compras",
+            "total_compras",
+            "prazo_compras",
+
+            "setor_comex",
+            "fornecedor_comex",
+            "descricao_fornecedor_comex",
+            "preco_comex",
+            "total_comex",
+            "prazo_comex",
+
+            "melhor_preco",
+            "fornecedor_aprovado",
+            "aprovado",
+            "observacao"
+        );
+
+    }
+
+    return cols;
 }
 
-// =======================
+//================================
 // PERMISSÃO
-// =======================
+//================================
+
 function podeEditar(c){
 
-  if(perfil==="pcp") return ["codigo","descricao","qtd","prazo"].includes(c);
-  if(perfil==="compras") return c.includes("compras");
-  if(perfil==="comex") return c.includes("comex");
-  if(perfil==="controladoria") return ["aprovado"].includes(c);
+    if(perfil==="pcp"){
 
-  return false;
+        return [
+          "codigo",
+          "descricao",
+          "qtd"
+        ].includes(c);
+
+    }
+
+    if(perfil==="compras"){
+
+        return c.includes("compras");
+
+    }
+
+    if(perfil==="comex"){
+
+        return c.includes("comex");
+
+    }
+
+    if(perfil==="controladoria"){
+
+        return [
+            "aprovado",
+            "observacao",
+            "fornecedor_aprovado"
+        ].includes(c);
+
+    }
+
+    return false;
 }
 
-// =======================
-// AÇÕES
-// =======================
+//================================
+// ADICIONA LINHA
+//================================
+
 function addLinha(){
-  dados.push({});
-  salvar();
-  render();
+
+    dados.push({});
+
+    salvar();
+
+    render();
+
 }
+
+//================================
+// REMOVE
+//================================
+
+function remover(i){
+
+    dados.splice(i,1);
+
+    salvar();
+
+    render();
+
+}
+
+//================================
+// CALCULA
+//================================
 
 function update(i,c,v){
 
-  dados[i][c] = v;
+    dados[i][c] = v;
 
-  let c1 = parseFloat(dados[i].preco_compras || 999999);
-  let c2 = parseFloat(dados[i].preco_comex || 999999);
+    let qtd =
+    parseFloat(
+      String(dados[i].qtd || 0)
+      .replace(",",".")
+    );
 
-  dados[i].melhor = Math.min(c1,c2);
+    let vCompras =
+    parseFloat(
+      String(dados[i].preco_compras || 0)
+      .replace(",",".")
+    );
 
-  salvar();
+    let vComex =
+    parseFloat(
+      String(dados[i].preco_comex || 0)
+      .replace(",",".")
+    );
+
+    dados[i].total_compras =
+    (qtd * vCompras).toFixed(2);
+
+    dados[i].total_comex =
+    (qtd * vComex).toFixed(2);
+
+    if(vCompras > 0 &&
+       vComex > 0){
+
+        dados[i].melhor_preco =
+        Math.min(
+            vCompras,
+            vComex
+        );
+
+        dados[i].fornecedor_aprovado =
+        vCompras < vComex
+        ? "COMPRAS"
+        : "COMEX";
+    }
+
+    salvar();
+
+    render();
 }
 
-function remover(i){
-  dados.splice(i,1);
-  salvar();
-  render();
-}
-
-// =======================
+//================================
 // RENDER
-// =======================
+//================================
+
 function render(){
 
-  let cols = colunas();
+    const cols = colunas();
 
-  let nomes = {
-    codigo:"Código",
-    descricao:"Descrição",
-    qtd:"Qtd",
-    prazo:"Prazo",
-    preco_compras:"Preço Compras",
-    prazo_compras:"Prazo Compras",
-    preco_comex:"Preço COMEX",
-    prazo_comex:"Prazo COMEX",
-    melhor:"Melhor Preço",
-    aprovado:"Aprovar"
-  };
+    const nomes = {
 
-  document.getElementById("cabecalho").innerHTML =
-    cols.map(c => `<th>${nomes[c]}</th>`).join("") + "<th>Ação</th>";
+      codigo:"Código",
+      descricao:"Descrição",
+      qtd:"Quantidade",
 
-  let html = "";
+      setor_compras:"Setor",
+      fornecedor_compras:"Cód. Forn.",
+      descricao_fornecedor_compras:"Fornecedor",
+      preco_compras:"Preço Unit.",
+      total_compras:"Total (R$)",
+      prazo_compras:"Prazo Dias",
 
-  dados.forEach((r,i)=>{
+      setor_comex:"Setor",
+      fornecedor_comex:"Cód. Forn.",
+      descricao_fornecedor_comex:"Fornecedor",
+      preco_comex:"Preço Unit.",
+      total_comex:"Total (R$)",
+      prazo_comex:"Prazo Dias",
 
-    html += "<tr>";
+      melhor_preco:"Melhor Preço",
+      fornecedor_aprovado:"Fornecedor Vencedor",
+      aprovado:"Aprovar",
+      observacao:"Observação"
+    };
 
-    cols.forEach(c=>{
+    document.getElementById("cabecalho").innerHTML =
 
-      if(c==="aprovado"){
-        html += `<td>
-          <input type="checkbox" ${r.aprovado?"checked":""}
-          onchange="update(${i},'aprovado',this.checked)">
-        </td>`;
-      } else {
+    cols.map(c=>{
 
-        let val = r[c] || "";
+        let classe="pcp";
 
-        html += `<td>
-        <input value="${val}"
-        ${!podeEditar(c) ? "disabled" : ""}
-        oninput="update(${i},'${c}',this.value)">
-        </td>`;
-      }
+        if(c.includes("compras"))
+            classe="compras";
 
+        if(c.includes("comex"))
+            classe="comex";
+
+        if(
+            c.includes("melhor") ||
+            c.includes("aprovado") ||
+            c.includes("observacao")
+        ){
+            classe="controladoria";
+        }
+
+        return `
+        <th class="${classe}">
+            ${nomes[c]}
+        </th>
+        `;
+
+    }).join("")
+    +
+    `<th class="controladoria">
+        Ação
+    </th>`;
+
+    let html="";
+
+    dados.forEach((r,i)=>{
+
+        html += `
+        <tr
+        class="${r.aprovado ? 'aprovadoLinha':''}">
+        `;
+
+        cols.forEach(c=>{
+
+            if(c==="melhor_preco"){
+
+                html += `
+                <td class="melhor">
+                    ${moeda(r[c])}
+                </td>
+                `;
+                return;
+            }
+
+            if(
+                c==="total_compras" ||
+                c==="total_comex"
+            ){
+
+                html += `
+                <td>
+                    ${moeda(r[c])}
+                </td>
+                `;
+                return;
+            }
+
+            if(c==="aprovado"){
+
+                html += `
+                <td>
+                    <input
+                    type="checkbox"
+                    ${r.aprovado ? "checked":""}
+                    onchange="
+                    update(
+                        ${i},
+                        'aprovado',
+                        this.checked
+                    )">
+                </td>
+                `;
+                return;
+            }
+
+            if(c==="observacao"){
+
+                html += `
+                <td>
+                    <textarea
+                    ${perfil!=="controladoria"
+                    ? "disabled"
+                    : ""}
+
+                    oninput="
+                    update(
+                        ${i},
+                        'observacao',
+                        this.value
+                    )"
+                    >${r.observacao || ""}</textarea>
+                </td>
+                `;
+
+                return;
+            }
+
+            html += `
+            <td>
+
+                <input
+                value="${r[c] || ''}"
+
+                ${!podeEditar(c)
+                ? 'disabled'
+                : ''}
+
+                oninput="
+                update(
+                    ${i},
+                    '${c}',
+                    this.value
+                )">
+
+            </td>
+            `;
+        });
+
+        html += `
+        <td>
+            <button
+            class="remove"
+            onclick="remover(${i})">
+            X
+            </button>
+        </td>
+        `;
+
+        html += "</tr>";
     });
 
-    html += `<td><button onclick="remover(${i})">X</button></td>`;
-    html += "</tr>";
-  });
-
-  document.getElementById("grid").innerHTML = html;
+    document
+    .getElementById("grid")
+    .innerHTML = html;
 }
 
-// =======================
-// FORÇA SALVAR AO ENVIAR
-// =======================
-document.addEventListener("click", function(e){
+//================================
+// ENVIO BPM
+//================================
 
-  let texto = (e.target.innerText || "").toLowerCase();
+document.addEventListener(
+"click",
+function(e){
 
-  if(texto.includes("enviar")){
-    salvar();
-  }
+    let texto =
+    (e.target.innerText || "")
+    .toLowerCase();
+
+    if(
+        texto.includes("enviar") ||
+        texto.includes("salvar")
+    ){
+        salvar();
+    }
 
 });
 
-// =======================
-// INIT SEGURO
-// =======================
-window.onload = function(){
-  carregar();
-  render();
+//================================
+// INICIALIZA
+//================================
+
+window.onload=function(){
+
+    carregar();
+
+    render();
+
 };
 
 </script>
