@@ -2,26 +2,177 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Grid de Cotações</title>
+<title>Grid Executivo de Cotações</title>
+
 <style>
-body{font-family:Segoe UI,Arial;background:#f4f6f9;padding:20px}table{width:100%;border-collapse:collapse;min-width:1600px}th,td{border:1px solid #ddd;padding:6px}th{color:#fff}.pcp{background:#0F4C81}.compras{background:#198754}.comex{background:#D97706}.controladoria{background:#6B21A8}input,textarea{width:100%;border:none;padding:5px}.melhor{background:#dcfce7;font-weight:bold}button{padding:6px 10px}.add{background:#2563eb;color:#fff}
+body{
+    font-family: Segoe UI, Arial, sans-serif;
+    background:#f3f4f6;
+    padding:20px;
+}
+
+h2{
+    margin-bottom:15px;
+    font-size:16px;
+}
+
+.grid-cotacoes{
+    width:100%;
+    border-collapse:collapse;
+    background:#fff;
+    min-width:1900px;
+}
+
+.grid-cotacoes th,
+.grid-cotacoes td{
+    border:1px solid #d1d5db;
+    padding:8px;
+    text-align:center;
+    font-size:13px;
+}
+
+.grid-cotacoes th{
+    color:#fff;
+    font-weight:600;
+}
+
+/* Cabeçalhos principais */
+.pcp-header{
+    background:#114d7d;
+}
+
+.compras-header{
+    background:#0d8b46;
+}
+
+.comex-header{
+    background:#d97706;
+}
+
+.control-header{
+    background:#6b21a8;
+}
+
+/* Subcabeçalhos */
+.pcp{
+    background:#175a92;
+}
+
+.solicitacao{
+    background:#6b7280;
+}
+
+.compras{
+    background:#08914d;
+}
+
+.comex{
+    background:#e07b00;
+}
+
+.control{
+    background:#7b2cbf;
+}
+
+.flag-linha td{
+    text-align:left;
+    background:#f8f9fa;
+}
 </style>
 </head>
+
 <body>
-<h2>Grid de Cotações</h2>
-<table><thead><tr>
-<th class="pcp">Código</th><th class="pcp">Descrição</th><th class="pcp">Quantidade</th><th class="pcp">Prazo Dias</th>
-<th class="compras">Cód. Forn.</th><th class="compras">Fornecedor</th><th class="compras">Preço Unit.</th><th class="compras">Total</th><th class="compras">Prazo</th>
-<th class="comex">Cód. Forn.</th><th class="comex">Fornecedor</th><th class="comex">Preço Unit.</th><th class="comex">Total</th><th class="comex">Prazo</th>
-<th class="controladoria">Melhor Preço</th><th class="controladoria">Fornecedor Vencedor</th><th class="controladoria">Aprovação</th><th class="controladoria">Observação</th><th class="controladoria">Ação</th>
-</tr></thead><tbody id="grid"></tbody></table>
-<button class="add" onclick="addLinha()">Adicionar Linha</button>
-<script>
-let dados=[];
-function moeda(v){return Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});} 
-function addLinha(){dados.push({aprovado:false});render();}
-function remover(i){dados.splice(i,1);render();}
-function update(i,c,v){dados[i][c]=v;let q=parseFloat(dados[i].qtd||0);let pc=parseFloat(dados[i].preco_compras||0);let pe=parseFloat(dados[i].preco_comex||0);dados[i].total_compras=(q*pc);dados[i].total_comex=(q*pe);if(pc>0&&pe>0){dados[i].melhor_preco=Math.min(pc,pe);dados[i].fornecedor_aprovado=(pc<=pe)?(dados[i].descricao_fornecedor_compras||'Compras'):(dados[i].descricao_fornecedor_comex||'COMEX');}render();}
-function render(){let h='';dados.forEach((r,i)=>{h+=`<tr><td><input value='${r.codigo||""}' oninput="update(${i},'codigo',this.value)"></td><td><input value='${r.descricao||""}' oninput="update(${i},'descricao',this.value)"></td><td><input value='${r.qtd||""}' oninput="update(${i},'qtd',this.value)"></td><td><input value='${r.prazo_pcp||""}' oninput="update(${i},'prazo_pcp',this.value)"></td><td><input value='${r.fornecedor_compras||""}' oninput="update(${i},'fornecedor_compras',this.value)"></td><td><input value='${r.descricao_fornecedor_compras||""}' oninput="update(${i},'descricao_fornecedor_compras',this.value)"></td><td><input value='${r.preco_compras||""}' oninput="update(${i},'preco_compras',this.value)"></td><td>${moeda(r.total_compras)}</td><td><input value='${r.prazo_compras||""}' oninput="update(${i},'prazo_compras',this.value)"></td><td><input value='${r.fornecedor_comex||""}' oninput="update(${i},'fornecedor_comex',this.value)"></td><td><input value='${r.descricao_fornecedor_comex||""}' oninput="update(${i},'descricao_fornecedor_comex',this.value)"></td><td><input value='${r.preco_comex||""}' oninput="update(${i},'preco_comex',this.value)"></td><td>${moeda(r.total_comex)}</td><td><input value='${r.prazo_comex||""}' oninput="update(${i},'prazo_comex',this.value)"></td><td class='melhor'>${moeda(r.melhor_preco)}</td><td>${r.fornecedor_aprovado||''}</td><td><input type='checkbox' ${(r.aprovado)?'checked':''} onchange="update(${i},'aprovado',this.checked)"></td><td><textarea oninput="update(${i},'observacao',this.value)">${r.observacao||''}</textarea></td><td><button onclick='remover(${i})'>X</button></td></tr>`});document.getElementById('grid').innerHTML=h;}
-addLinha();
-</script></body></html>
+
+<h2>Grid Executivo de Cotações</h2>
+
+<table class="grid-cotacoes">
+
+    <thead>
+
+        <tr>
+            <th colspan="4" class="pcp-header">PCP</th>
+            <th colspan="8" class="compras-header">COMPRAS</th>
+            <th colspan="8" class="comex-header">COMÉRCIO EXTERIOR</th>
+            <th colspan="5" class="control-header">CONTROLADORIA</th>
+        </tr>
+
+        <tr>
+
+            <!-- PCP -->
+            <th class="pcp">Código Produto</th>
+            <th class="pcp">Descrição Produto</th>
+            <th class="pcp">Quantidade</th>
+            <th class="pcp">Prazo Dias</th>
+
+            <!-- Compras -->
+            <th class="solicitacao">Código Produto</th>
+            <th class="solicitacao">Descrição Produto</th>
+            <th class="solicitacao">Quantidade</th>
+            <th class="solicitacao">Prazo Dias</th>
+            <th class="compras">Cód. Forn.</th>
+            <th class="compras">Fornecedor</th>
+            <th class="compras">Preço Unit.</th>
+            <th class="compras">Preço Total</th>
+
+            <!-- Comércio Exterior -->
+            <th class="solicitacao">Código Produto</th>
+            <th class="solicitacao">Descrição Produto</th>
+            <th class="solicitacao">Quantidade</th>
+            <th class="solicitacao">Prazo Dias</th>
+            <th class="comex">Cód. Forn.</th>
+            <th class="comex">Fornecedor</th>
+            <th class="comex">Preço Unit.</th>
+            <th class="comex">Preço Total</th>
+
+            <!-- Controladoria -->
+            <th class="control">Melhor Preço</th>
+            <th class="control">Fornecedor Vencedor</th>
+            <th class="control">Economia</th>
+            <th class="control">Aprovação</th>
+            <th class="control">Observação</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        <!-- INÍCIO REPETIÇÃO SENIOR BPM / FLUIG -->
+        <tr>
+            <td>${codigoProduto}</td>
+            <td>${descricaoProduto}</td>
+            <td>${quantidade}</td>
+            <td>${prazoDias}</td>
+
+            <td>${codigoProdutoCompras}</td>
+            <td>${descricaoProdutoCompras}</td>
+            <td>${quantidadeCompras}</td>
+            <td>${prazoDiasCompras}</td>
+            <td>${codFornecedorCompras}</td>
+            <td>${fornecedorCompras}</td>
+            <td>${precoUnitCompras}</td>
+            <td>${precoTotalCompras}</td>
+
+            <td>${codigoProdutoComex}</td>
+            <td>${descricaoProdutoComex}</td>
+            <td>${quantidadeComex}</td>
+            <td>${prazoDiasComex}</td>
+            <td>${codFornecedorComex}</td>
+            <td>${fornecedorComex}</td>
+            <td>${precoUnitComex}</td>
+            <td>${precoTotalComex}</td>
+
+            <td>${melhorPreco}</td>
+            <td>${fornecedorVencedor}</td>
+            <td>${economia}</td>
+            <td>${aprovacao}</td>
+            <td>${observacao}</td>
+        </tr>
+        <!-- FIM REPETIÇÃO SENIOR BPM / FLUIG -->
+
+    </tbody>
+
+</table>
+
+</body>
+</html>
