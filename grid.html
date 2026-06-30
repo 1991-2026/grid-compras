@@ -3,74 +3,73 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Grid de Cotações Senior BPM</title>
+<title>Fluxo_Compras_Senior_Versao_Final</title>
 <style>
-body{font-family:Segoe UI,Arial;margin:15px}
-button{background:#198754;color:#fff;border:0;padding:10px 14px;border-radius:4px;cursor:pointer;margin-bottom:10px}
-.table-wrap{overflow:auto}
-table{border-collapse:collapse;min-width:2200px;width:100%}
-th,td{border:1px solid #d0d0d0;padding:4px}
-input,select{width:100%;box-sizing:border-box;border:0;padding:5px}
-.top-pcp{background:#175a92;color:#fff}.top-compras{background:#148f43;color:#fff}.top-comex{background:#e67e00;color:#fff}.top-ctrl{background:#7b2cbf;color:#fff}
-.sub{background:#f1f1f1;font-weight:bold}
-.readonly{background:#f4f4f4}
+body{font-family:Segoe UI,Arial,sans-serif;margin:20px}
+h2{color:#0A3D62;text-transform:uppercase}
+#btnNova{background:#2f6fab;color:#fff;border:none;padding:8px 14px;cursor:pointer}
+table{border-collapse:collapse;width:100%;min-width:2200px}
+th,td{border:1px solid #ccc;padding:5px;text-align:center}
+th{color:#000;text-transform:uppercase}
+.grp-pcp,.desc-pcp{background:#EAF4FF}
+.grp-compras,.desc-compras{background:#F5F5F5}
+.grp-comex,.desc-comex{background:#F5F5F5}
+.grp-control,.desc-control{background:#FFF3CD}
+.readonly{background:#F5F5F5}
+input,select{width:100%;box-sizing:border-box;padding:5px}
+.exc{background:#dc3545;color:#fff;border:none;padding:6px 10px;cursor:pointer}
 </style>
-<script>
-function adicionarLinha(){
- const tb=document.getElementById('tb');
- const nova=tb.rows[0].cloneNode(true);
- nova.querySelectorAll('input').forEach(i=>i.value='');
- nova.querySelectorAll('select').forEach(s=>s.selectedIndex=0);
- tb.appendChild(nova);
-}
-function excluir(btn){if(document.getElementById('tb').rows.length>1) btn.closest('tr').remove();}
-</script>
 </head>
 <body>
-<h2>Grid de Cotações - Senior BPM</h2>
-<button onclick='adicionarLinha()'>+ Inserir Nova Cotação</button>
-<div class='table-wrap'>
+<h2>ITENS DE COTAÇÃO</h2>
+<button type="button" id="btnNova">+ ADICIONAR LINHA</button><br><br>
+<div style="overflow-x:auto">
 <table>
 <thead>
 <tr>
-<th colspan='4' class='top-pcp'>PCP</th>
-<th colspan='6' class='top-compras'>COMPRAS</th>
-<th colspan='6' class='top-comex'>COMEX</th>
-<th colspan='4' class='top-ctrl'>CONTROLADORIA</th>
-<th rowspan='2' class='top-ctrl'>Ação</th>
+<th colspan="4" class="grp-pcp">PCP</th>
+<th colspan="6" class="grp-compras">COMPRAS</th>
+<th colspan="6" class="grp-comex">COMEX</th>
+<th colspan="4" class="grp-control">CONTROLADORIA - VALIDAÇÃO FINAL</th>
+<th rowspan="2">AÇÃO</th>
 </tr>
-<tr class='sub'>
-<th>Código Produto</th><th>Descrição Produto</th><th>Quantidade</th><th>Prazo</th>
-<th>Cód. Fornecedor</th><th>Fornecedor</th><th>Quantidade</th><th>Preço Unitário</th><th>Preço Total</th><th>Prazo</th>
-<th>Cód. Fornecedor</th><th>Fornecedor</th><th>Quantidade</th><th>Preço Unitário</th><th>Preço Total</th><th>Prazo</th>
-<th>Melhor Preço</th><th>Economia</th><th>Aprovação</th><th>Observação</th>
+<tr>
+<th class="desc-pcp">CÓDIGO PRODUTO</th>
+<th class="desc-pcp">DESCRIÇÃO PRODUTO</th>
+<th class="desc-pcp">QUANTIDADE</th>
+<th class="desc-pcp">PRAZO PCP</th>
+<th class="desc-compras">CÓD. FORNECEDOR COMPRAS</th>
+<th class="desc-compras">FORNECEDOR COMPRAS</th>
+<th class="desc-compras">QTD COMPRAS</th>
+<th class="desc-compras">PREÇO UNIT. COMPRAS</th>
+<th class="desc-compras">PREÇO TOTAL COMPRAS</th>
+<th class="desc-compras">PRAZO COMPRAS</th>
+<th class="desc-comex">CÓD. FORNECEDOR COMEX</th>
+<th class="desc-comex">FORNECEDOR COMEX</th>
+<th class="desc-comex">QTD COMEX</th>
+<th class="desc-comex">PREÇO UNIT. COMEX</th>
+<th class="desc-comex">PREÇO TOTAL COMEX</th>
+<th class="desc-comex">PRAZO COMEX</th>
+<th class="desc-control">MELHOR PREÇO</th>
+<th class="desc-control">ECONOMIA</th>
+<th class="desc-control">APROVAÇÃO</th>
+<th class="desc-control">OBSERVAÇÃO</th>
 </tr>
 </thead>
-<tbody id='tb'>
+<tbody id="tb">
 <tr>
-<td><input></td>
-<td><input class='readonly' readonly></td>
-<td><input type='number'></td>
-<td><input></td>
-<td><input></td>
-<td><input class='readonly' readonly></td>
-<td><input type='number'></td>
-<td><input></td>
-<td><input class='readonly' readonly></td>
-<td><input></td>
-<td><input></td>
-<td><input class='readonly' readonly></td>
-<td><input type='number'></td>
-<td><input></td>
-<td><input class='readonly' readonly></td>
-<td><input></td>
-<td><input class='readonly' readonly></td>
-<td><input class='readonly' readonly></td>
-<td><select><option></option><option>Aprovado</option><option>Reprovado</option></select></td>
-<td><input></td>
-<td><button type='button' onclick='excluir(this)' style='background:#dc3545'>Excluir</button></td>
+<td><input></td><td><input class="readonly" readonly></td><td><input type="number"></td><td><input></td>
+<td><input></td><td><input class="readonly" readonly></td><td><input class="qtdCompras" type="number"></td><td><input class="unitCompras" type="number" step="0.01"></td><td><input class="totalCompras readonly" readonly></td><td><input></td>
+<td><input></td><td><input class="readonly" readonly></td><td><input class="qtdComex" type="number"></td><td><input class="unitComex" type="number" step="0.01"></td><td><input class="totalComex readonly" readonly></td><td><input></td>
+<td><input class="melhorPreco readonly" readonly></td><td><input class="economia readonly" readonly></td><td><select><option></option><option>APROVADO</option><option>REPROVADO</option></select></td><td><input></td><td><button type="button" class="exc">EXCLUIR</button></td>
 </tr>
 </tbody>
-</table>
-</div>
+</table></div>
+<script>
+function f(v){return Number(v||0).toFixed(2)}
+function calc(r){let tc=(+r.querySelector('.qtdCompras').value||0)*(+r.querySelector('.unitCompras').value||0);let tx=(+r.querySelector('.qtdComex').value||0)*(+r.querySelector('.unitComex').value||0);r.querySelector('.totalCompras').value=f(tc);r.querySelector('.totalComex').value=f(tx);let m=(tc&&tx)?Math.min(tc,tx):(tc||tx);r.querySelector('.melhorPreco').value=f(m);r.querySelector('.economia').value=f(Math.abs(tc-tx));}
+document.addEventListener('input',e=>{let tr=e.target.closest('tr');if(tr&&e.target.matches('.qtdCompras,.unitCompras,.qtdComex,.unitComex'))calc(tr);});
+document.getElementById('btnNova').onclick=()=>{let n=document.querySelector('#tb tr').cloneNode(true);n.querySelectorAll('input').forEach(i=>i.value='');n.querySelectorAll('select').forEach(s=>s.selectedIndex=0);document.getElementById('tb').appendChild(n);};
+document.addEventListener('click',e=>{if(e.target.classList.contains('exc')){let tb=document.getElementById('tb');if(tb.rows.length>1)e.target.closest('tr').remove();}});
+</script>
 </body></html>
