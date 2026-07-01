@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>COTAÇÃO COMPRAS</title>
+
 <style>
 *{
     box-sizing:border-box;
@@ -20,8 +22,41 @@ body{
     padding:10px;
 }
 
-h2{
-    font-size:24px;
+.cabecalho{
+    display:flex;
+    align-items:center;
+    gap:25px;
+    width:100%;
+    padding:12px 20px;
+    margin-bottom:20px;
+    border:1px solid #777;
+    background:#ffffff;
+}
+
+.logo{
+    height:60px;
+    width:auto;
+    display:block;
+    object-fit:contain;
+}
+
+.cabecalho-texto{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.titulo-setor{
+    font-size:22px;
+    font-weight:700;
+    color:#1E3F73;
+    text-transform:uppercase;
+}
+
+.subtitulo-setor{
+    font-size:15px;
+    color:#555;
+    margin-top:4px;
 }
 
 .wrap{
@@ -86,6 +121,7 @@ function valor(c){
 }
 
 function calc(el){
+
     let tr=el.closest('tr');
 
     let q=valor(tr.querySelector('.qtd'));
@@ -95,6 +131,7 @@ function calc(el){
 }
 
 function fmt(el){
+
     let v=valor(el);
 
     el.value=v ? moeda(v) : '';
@@ -103,11 +140,14 @@ function fmt(el){
 }
 
 function addRow(){
+
     let r=document.getElementById('tb').insertRow();
+
     r.innerHTML=document.getElementById('tpl').innerHTML;
 }
 
 function delRow(btn){
+
     btn.closest('tr').remove();
 }
 </script>
@@ -116,7 +156,26 @@ function delRow(btn){
 
 <body>
 
-<h2>COTAÇÃO COMPRAS</h2>
+<div class="cabecalho">
+
+    <img
+        src="LOGO WINDOWS.png"
+        alt="Logo Suggar"
+        class="logo">
+
+    <div class="cabecalho-texto">
+
+        <div class="titulo-setor">
+            COTAÇÃO COMPRAS
+        </div>
+
+        <div class="subtitulo-setor">
+            Departamento de Compras
+        </div>
+
+    </div>
+
+</div>
 
 <button type="button" onclick="addRow()">
     + Inserir Linha
@@ -153,59 +212,50 @@ function delRow(btn){
 
 <tr>
 
-    <td>
-        <input class="readonly" readonly>
-    </td>
+<td>
+    <input class="readonly" readonly>
+</td>
 
-    <td>
-        <input class="readonly" readonly>
-    </td>
+<td>
+    <input class="readonly" readonly>
+</td>
 
-    <td>
-        <input class="readonly" readonly>
-    </td>
+<td>
+    <input class="readonly" readonly>
+</td>
 
-    <td>
-        <input class="readonly" readonly>
-    </td>
+<td>
+    <input class="readonly" readonly>
+</td>
 
-    <td>
-        <input>
-    </td>
+<td>
+    <input>
+</td>
 
-    <td>
-        <input class="readonly" readonly>
-    </td>
+<td>
+    <input class="readonly" readonly>
+</td>
 
-    <td>
-        <input class="qtd" oninput="calc(this)">
-    </td>
+<td>
+    <input class="qtd" oninput="calc(this)">
+</td>
 
-    <td>
-        <input class="preco"
-               oninput="calc(this)"
-               onblur="fmt(this)">
-    </td>
+<td>
+    <input class="preco"
+           oninput="calc(this)"
+           onblur="fmt(this)">
+</td>
 
-    <td>
-        <input class="total readonly" readonly>
-    </td>
+<td>
+    <input class="total readonly" readonly>
+</td>
 
-    <td>
-        <input>
-    </td>
+<td>
+    <input>
+</td>
 
-    <td class="acao">
-        <button type="button" onclick="delRow(this)">
-            Excluir
-        </button>
-    </td>
-
-</tr>
-
-</template>
-
-<script>
+<td class="acao">
+    <button type="button" onclick="delRow(thist>
 addRow();
 </script>
 
