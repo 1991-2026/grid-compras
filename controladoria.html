@@ -1,3 +1,11 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>ANÁLISE DA CONTROLADORIA</title>
+
 <style>
 *{
     box-sizing:border-box;
@@ -78,3 +86,121 @@ input[type=checkbox]{
     text-align:center;
 }
 </style>
+
+<script>
+function sel(a,b){
+    if(document.getElementById(a).checked){
+        document.getElementById(b).checked=false;
+    }
+}
+
+function validarControladoria(){
+
+    var rc=document.getElementById('reprovado_comex').checked;
+    var rp=document.getElementById('reprovado_compras').checked;
+    var j=document.getElementById('justificativa').value.trim();
+
+    if((rc||rp) && j===''){
+        alert(
+            'A REPROVAÇÃO DA PROPOSTA REQUER O PREENCHIMENTO OBRIGATÓRIO DA JUSTIFICATIVA DA DECISÃO DA CONTROLADORIA.'
+        );
+
+        document.getElementById('justificativa').focus();
+
+        return false;
+    }
+
+    return true;
+}
+</script>
+
+</head>
+
+<body>
+
+<h2>ANÁLISE DA CONTROLADORIA</h2>
+
+<div class="wrap">
+
+<table>
+<tr>
+    <th>PRODUTO</th>
+    <th>QTD COMEX</th>
+    <th>PREÇO UNIT.</th>
+    <th>PREÇO TOTAL</th>
+    <th>PRAZO</th>
+    <th>INDICADOR</th>
+    <th>APR.</th>
+    <th>REP.</th>
+</tr>
+
+<tr>
+    <td><input type="text" readonly></td>
+    <td><input type="text" readonly></td>
+    <td><input type="text" readonly></td>
+    <td><input type="text" readonly></td>
+    <td><input type="text" readonly></td>
+    <td><input type="text" readonly></td>
+
+    <td class="c">
+        <input
+            type="checkbox"
+            id="aprovado_comex"
+            onclick="sel('aprovado_comex','reprovado_comex')">
+    </td>
+
+    <td class="c">
+        <input
+            type="checkbox"
+            id="reprovado_comex"
+            onclick="sel('reprovado_comex','aprovado_comex')">
+    </td>
+</tr>
+</table>
+
+<table>
+<tr>
+    <th>PRODUTO</th>
+    <th>QTD COMPRA</th>
+    <th>PREÇO UNIT.</th>
+    <th>PREÇO TOTAL</th>
+    <th>PRAZO</th>
+    <th>INDICADOR</th>
+    <th>APR.</th>
+    <th>REP.</th>
+</tr>
+
+<tr>
+    <td><input type="text" readonly></td>
+    <td><input type="text" readonly></td>
+    <td><input type="text" readonly></td>
+    <td><input type="text" readonly></td>
+    <td><input type="text" readonly></td>
+    <td><input type="text" readonly></td>
+
+    <td class="c">
+        <input
+            type="checkbox"
+            id="aprovado_compras"
+            onclick="sel('aprovado_compras','reprovado_compras')">
+    </td>
+
+    <td class="c">
+        <input
+            type="checkbox"
+            id="reprovado_compras"
+            onclick="sel('reprovado_compras','aprovado_compras')">
+    </td>
+</tr>
+</table>
+
+</div>
+
+<h3>JUSTIFICATIVA DA DECISÃO DA CONTROLADORIA</h3>
+
+<textarea
+id="justificativa"
+placeholder="INFORME DE FORMA OBJETIVA OS MOTIVOS QUE FUNDAMENTAM A REPROVAÇÃO DA PROPOSTA, INCLUINDO DIVERGÊNCIAS IDENTIFICADAS, RESTRIÇÕES FINANCEIRAS, INCONSISTÊNCIAS COMERCIAIS, DOCUMENTAIS OU QUALQUER OUTRO FATOR QUE IMPACTE A APROVAÇÃO."></textarea>
+
+</body>
+</html>
