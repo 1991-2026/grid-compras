@@ -1,75 +1,194 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fluxo_Compras_Senior_Versao_Final</title>
+<meta charset="utf-8">
+
 <style>
-body{font-family:Segoe UI,Arial,sans-serif;margin:20px}
-h2{color:#0A3D62;text-transform:uppercase}
-#btnNova{background:#2f6fab;color:#fff;border:none;padding:8px 14px;cursor:pointer}
-table{border-collapse:collapse;width:100%;min-width:2200px}
-th,td{border:1px solid #ccc;padding:5px;text-align:center}
-th{color:#000;text-transform:uppercase}
-.grp-pcp,.desc-pcp{background:#EAF4FF}
-.grp-compras,.desc-compras{background:#F5F5F5}
-.grp-comex,.desc-comex{background:#F5F5F5}
-.grp-control,.desc-control{background:#FFF3CD}
-.readonly{background:#F5F5F5}
-input,select{width:100%;box-sizing:border-box;padding:5px}
-.exc{background:#dc3545;color:#fff;border:none;padding:6px 10px;cursor:pointer}
+*{
+    box-sizing:border-box;
+}
+
+html,
+body{
+    width:100%;
+    max-width:100%;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Segoe UI,Arial,sans-serif;
+    font-size:18px;
+    padding:5px;
+}
+
+h2{
+    font-size:24px;
+    margin:0 0 10px;
+}
+
+.wrap{
+    width:100%;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    border:1px solid #bdbdbd;
+    padding:8px;
+    font-size:18px;
+}
+
+th{
+    background:#d9d9d9;
+    text-align:center;
+}
+
+th:nth-child(1),
+td:nth-child(1){
+    width:20%;
+}
+
+th:nth-child(2),
+td:nth-child(2){
+    width:30%;
+}
+
+th:nth-child(3),
+td:nth-child(3){
+    width:15%;
+}
+
+th:nth-child(4),
+td:nth-child(4){
+    width:25%;
+}
+
+th:nth-child(5),
+td:nth-child(5){
+    width:10%;
+}
+
+input{
+    width:100%;
+    height:38px;
+    font-size:18px;
+}
+
+.readonly{
+    background:#f5f5f5;
+}
+
+.acao{
+    text-align:center;
+}
+
+button{
+    font-size:18px;
+    padding:4px 10px;
+}
 </style>
-</head>
-<body>
-<h2>ITENS DE COTAÇÃO</h2>
-<button type="button" id="btnNova">+ ADICIONAR LINHA</button><br><br>
-<div style="overflow-x:auto">
-<table>
-<thead>
-<tr>
-<th colspan="4" class="grp-pcp">PCP</th>
-<th colspan="6" class="grp-compras">COMPRAS</th>
-<th colspan="6" class="grp-comex">COMEX</th>
-<th colspan="4" class="grp-control">CONTROLADORIA - VALIDAÇÃO FINAL</th>
-<th rowspan="2">AÇÃO</th>
-</tr>
-<tr>
-<th class="desc-pcp">CÓDIGO PRODUTO</th>
-<th class="desc-pcp">DESCRIÇÃO PRODUTO</th>
-<th class="desc-pcp">QUANTIDADE</th>
-<th class="desc-pcp">PRAZO PCP</th>
-<th class="desc-compras">CÓD. FORNECEDOR COMPRAS</th>
-<th class="desc-compras">FORNECEDOR COMPRAS</th>
-<th class="desc-compras">QTD COMPRAS</th>
-<th class="desc-compras">PREÇO UNIT. COMPRAS</th>
-<th class="desc-compras">PREÇO TOTAL COMPRAS</th>
-<th class="desc-compras">PRAZO COMPRAS</th>
-<th class="desc-comex">CÓD. FORNECEDOR COMEX</th>
-<th class="desc-comex">FORNECEDOR COMEX</th>
-<th class="desc-comex">QTD COMEX</th>
-<th class="desc-comex">PREÇO UNIT. COMEX</th>
-<th class="desc-comex">PREÇO TOTAL COMEX</th>
-<th class="desc-comex">PRAZO COMEX</th>
-<th class="desc-control">MELHOR PREÇO</th>
-<th class="desc-control">ECONOMIA</th>
-<th class="desc-control">APROVAÇÃO</th>
-<th class="desc-control">OBSERVAÇÃO</th>
-</tr>
-</thead>
-<tbody id="tb">
-<tr>
-<td><input></td><td><input class="readonly" readonly></td><td><input type="number"></td><td><input></td>
-<td><input></td><td><input class="readonly" readonly></td><td><input class="qtdCompras" type="number"></td><td><input class="unitCompras" type="number" step="0.01"></td><td><input class="totalCompras readonly" readonly></td><td><input></td>
-<td><input></td><td><input class="readonly" readonly></td><td><input class="qtdComex" type="number"></td><td><input class="unitComex" type="number" step="0.01"></td><td><input class="totalComex readonly" readonly></td><td><input></td>
-<td><input class="melhorPreco readonly" readonly></td><td><input class="economia readonly" readonly></td><td><select><option></option><option>APROVADO</option><option>REPROVADO</option></select></td><td><input></td><td><button type="button" class="exc">EXCLUIR</button></td>
-</tr>
-</tbody>
-</table></div>
+
 <script>
-function f(v){return Number(v||0).toFixed(2)}
-function calc(r){let tc=(+r.querySelector('.qtdCompras').value||0)*(+r.querySelector('.unitCompras').value||0);let tx=(+r.querySelector('.qtdComex').value||0)*(+r.querySelector('.unitComex').value||0);r.querySelector('.totalCompras').value=f(tc);r.querySelector('.totalComex').value=f(tx);let m=(tc&&tx)?Math.min(tc,tx):(tc||tx);r.querySelector('.melhorPreco').value=f(m);r.querySelector('.economia').value=f(Math.abs(tc-tx));}
-document.addEventListener('input',e=>{let tr=e.target.closest('tr');if(tr&&e.target.matches('.qtdCompras,.unitCompras,.qtdComex,.unitComex'))calc(tr);});
-document.getElementById('btnNova').onclick=()=>{let n=document.querySelector('#tb tr').cloneNode(true);n.querySelectorAll('input').forEach(i=>i.value='');n.querySelectorAll('select').forEach(s=>s.selectedIndex=0);document.getElementById('tb').appendChild(n);};
-document.addEventListener('click',e=>{if(e.target.classList.contains('exc')){let tb=document.getElementById('tb');if(tb.rows.length>1)e.target.closest('tr').remove();}});
+function addRow(){
+    let t=document.getElementById('tb');
+    let r=t.insertRow();
+    r.innerHTML=document.getElementById('tpl').innerHTML;
+}
+
+function delRow(btn){
+    btn.parentNode.parentNode.remove();
+}
 </script>
-</body></html>
+
+</head>
+
+<body>
+
+<h2>SOLICITAÇÃO PCP</h2>
+
+<button type="button" onclick="addRow()">
+    + Inserir Linha
+</button>
+
+<div class="wrap">
+
+<table>
+
+    <thead>
+        <tr>
+            <th>CÓD. PRODUTO</th>
+            <th>PRODUTO</th>
+            <th>QTD</th>
+            <th>PRAZO</th>
+            <th>AÇÃO</th>
+        </tr>
+    </thead>
+
+    <tbody id="tb">
+        <tr>
+            <td>
+                <input type="text">
+            </td>
+
+            <td>
+                <input type="text" class="readonly" readonly>
+            </td>
+
+            <td>
+                <input type="text">
+            </td>
+
+            <td>
+                <input type="text">
+            </td>
+
+            <td class="acao">
+                <button type="button" onclick="delRow(this)">
+                    Excluir
+                </button>
+            </td>
+        </tr>
+    </tbody>
+
+</table>
+
+</div>
+
+<template id="tpl">
+
+<tr>
+
+    <td>
+        <input type="text">
+    </td>
+
+    <td>
+        <input type="text" class="readonly" readonly>
+    </td>
+
+    <td>
+        <input type="text">
+    </td>
+
+    <td>
+        <input type="text">
+    </td>
+
+    <td class="acao">
+        <button type="button" onclick="delRow(this)">
+            Excluir
+        </button>
+    </td>
+
+</tr>
+
+</template>
+
+</body>
+</html>
+``
