@@ -1,1 +1,49 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}html,body{margin:0;padding:0}body{font-family:Segoe UI,Arial,sans-serif;font-size:18px;padding:10px}h2{font-size:24px}.wrap{width:100%;overflow-x:auto}table{border-collapse:collapse;min-width:1800px;white-space:nowrap}th,td{border:1px solid #bdbdbd;padding:8px}th{background:#d9d9d9}input{width:100%;min-width:120px;height:38px;font-size:18px}.readonly{background:#f5f5f5}.acao{width:140px;text-align:center}button{font-size:18px}</style><script>function moeda(v){return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v)}function valor(c){let n=(c.value||'').replace(/\./g,'').replace(',','.').replace(/[^0-9.]/g,'');return parseFloat(n)||0}function calc(el){let tr=el.closest('tr');let q=valor(tr.querySelector('.qtd'));let p=valor(tr.querySelector('.preco'));tr.querySelector('.total').value=moeda(q*p)}function fmt(el){let v=valor(el);el.value=v?moeda(v):'';calc(el)}function addRow(){let r=document.getElementById('tb').insertRow();r.innerHTML=document.getElementById('tpl').innerHTML}function delRow(b){b.closest('tr').remove()}</script></head><body><h2>COTAÇÃO COMPRAS</h2><button onclick="addRow()">+ Inserir Linha</button><div class="wrap"><table><thead><tr><th>CÓD.</th><th>PRODUTO</th><th>QTD PROD.</th><th>PRAZO PCP</th><th>CÓD. FORN.</th><th>FORNECEDOR</th><th>QTD COMPRAS</th><th>PREÇO UNIT.</th><th>TOTAL</th><th>PRAZO COMPRAS</th><th>AÇÃO</th></tr></thead><tbody id="tb"></tbody></table></div><template id="tpl"><tr><td><input class="readonly" readonly></td><td><input class="readonly" readonly></td><td><input class="readonly" readonly></td><td><input class="readonly" readonly></td><td><input></td><td><input class="readonly" readonly></td><td><input class="qtd" oninput="calc(this)"></td><td><input class="preco" oninput="calc(this)" onblur="fmt(this)"></td><td><input class="total readonly" readonly></td><td><input></td><td class="acao"><button type="button" onclick="delRow(this)">Excluir</button></td></tr></template><script>addRow()</script></body></html>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+    font-family:Segoe UI,Arial,sans-serif;
+    font-size:18px;
+    padding:10px;
+}
+h2{font-size:24px}
+
+.wrap{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    border-collapse:collapse;
+    width:100%;          /* ocupa toda a largura */
+    table-layout:fixed;  /* distribui as colunas horizontalmente */
+}
+
+th,td{
+    border:1px solid #bdbdbd;
+    padding:8px;
+}
+
+th{
+    background:#d9d9d9;
+}
+
+input{
+    width:100%;
+    height:38px;
+    font-size:18px;
+}
+
+.readonly{
+    background:#f5f5f5;
+}
+
+.acao{
+    width:120px;
+    text-align:center;
+}
+
+button{
+    font-size:18px;
+}
+</style>
