@@ -24,10 +24,41 @@ body{
     padding:5px;
 }
 
-h2{
-    font-size:24px;
+.cabecalho{
+    display:flex;
+    align-items:center;
+    gap:25px;
+    width:100%;
+    padding:12px 20px;
+    margin-bottom:20px;
+    border:1px solid #777;
+    background:#ffffff;
+}
+
+.logo{
+    height:60px;
+    width:auto;
+    display:block;
+    object-fit:contain;
+}
+
+.cabecalho-texto{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.titulo-setor{
+    font-size:22px;
     font-weight:700;
-    margin:4px 0 10px;
+    color:#1E3F73;
+    text-transform:uppercase;
+}
+
+.subtitulo-setor{
+    font-size:15px;
+    color:#555;
+    margin-top:4px;
 }
 
 h3{
@@ -101,6 +132,7 @@ function validarControladoria(){
     var j=document.getElementById('justificativa').value.trim();
 
     if((rc||rp) && j===''){
+
         alert(
             'A REPROVAÇÃO DA PROPOSTA REQUER O PREENCHIMENTO OBRIGATÓRIO DA JUSTIFICATIVA DA DECISÃO DA CONTROLADORIA.'
         );
@@ -118,11 +150,31 @@ function validarControladoria(){
 
 <body>
 
-<h2>ANÁLISE DA CONTROLADORIA</h2>
+<div class="cabecalho">
+
+    <img
+        src="LOGO WINDOWS.png"
+        alt="Logo Suggar"
+        class="logo">
+
+    <div class="cabecalho-texto">
+
+        <div class="titulo-setor">
+            ANÁLISE DA CONTROLADORIA
+        </div>
+
+        <div class="subtitulo-setor">
+            Validação e Aprovação Financeira
+        </div>
+
+    </div>
+
+</div>
 
 <div class="wrap">
 
 <table>
+
 <tr>
     <th>PRODUTO</th>
     <th>QTD COMEX</th>
@@ -135,6 +187,7 @@ function validarControladoria(){
 </tr>
 
 <tr>
+
     <td><input type="text" readonly></td>
     <td><input type="text" readonly></td>
     <td><input type="text" readonly></td>
@@ -155,10 +208,13 @@ function validarControladoria(){
             id="reprovado_comex"
             onclick="sel('reprovado_comex','aprovado_comex')">
     </td>
+
 </tr>
+
 </table>
 
 <table>
+
 <tr>
     <th>PRODUTO</th>
     <th>QTD COMPRA</th>
@@ -171,6 +227,7 @@ function validarControladoria(){
 </tr>
 
 <tr>
+
     <td><input type="text" readonly></td>
     <td><input type="text" readonly></td>
     <td><input type="text" readonly></td>
@@ -191,16 +248,21 @@ function validarControladoria(){
             id="reprovado_compras"
             onclick="sel('reprovado_compras','aprovado_compras')">
     </td>
+
 </tr>
+
 </table>
 
 </div>
 
-<h3>JUSTIFICATIVA DA DECISÃO DA CONTROLADORIA</h3>
+<h3>
+JUSTIFICATIVA DA DECISÃO DA CONTROLADORIA
+</h3>
 
 <textarea
 id="justificativa"
-placeholder="INFORME DE FORMA OBJETIVA OS MOTIVOS QUE FUNDAMENTAM A REPROVAÇÃO DA PROPOSTA, INCLUINDO DIVERGÊNCIAS IDENTIFICADAS, RESTRIÇÕES FINANCEIRAS, INCONSISTÊNCIAS COMERCIAIS, DOCUMENTAIS OU QUALQUER OUTRO FATOR QUE IMPACTE A APROVAÇÃO."></textarea>
+placeholder="INFORME DE FORMA OBJETIVA OS MOTIVOS QUE FICADAS, RESTRIÇÕES FINANCEIRAS, INCONSISTÊNCIAS COMERCIAIS, DOCUMENTAIS OU QUALQUER OUTRO FATOR QUE IMPACTE A APROVAÇÃO.">
+</textarea>
 
 </body>
 </html>
