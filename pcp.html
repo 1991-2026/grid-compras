@@ -134,7 +134,7 @@ function addRow(){
 }
 
 function delRow(btn){
-    btn.parentNode.parentNode.remove();
+    btn.closest('tr').remove();
 }
 </script>
 
@@ -173,11 +173,11 @@ function delRow(btn){
 
 <thead>
 <tr>
-<th>CÓD. PRODUTO</th>
-<th>PRODUTO</th>
-<th>QTD</th>
-<th>PRAZO</th>
-<th>AÇÃO</th>
+    <th>CÓD. PRODUTO</th>
+    <th>PRODUTO</th>
+    <th>QTD</th>
+    <th>PRAZO</th>
+    <th>AÇÃO</th>
 </tr>
 </thead>
 
@@ -185,31 +185,32 @@ function delRow(btn){
 
 <tr>
 
-<td>
-    <input type="text">
-</td>
+    <td>
+        <input type="text">
+    </td>
 
-<td>
-    <input type="text"
-           class="readonly"
-           readonly>
-</td>
+    <td>
+        <input
+            type="text"
+            class="readonly"
+            readonly>
+    </td>
 
-<td>
-    <input type="text">
-</td>
+    <td>
+        <input type="text">
+    </td>
 
-<td>
-    <input type="text">
-</td>
+    <td>
+        <input type="text">
+    </td>
 
-<td class="acao">
-    <button
-        type="button"
-        onclick="delRow(this)">
-        Excluir
-    </button>
-</td>
+    <td class="acao">
+        <button
+            type="button"
+            onclick="delRow(this)">
+            Excluir
+        </button>
+    </td>
 
 </tr>
 
@@ -223,24 +224,30 @@ function delRow(btn){
 
 <tr>
 
-<td>
-    <input type="text">
-</td>
+    <td>
+        <input type="text">
+    </td>
 
-<td>
-    <input type="text"
-           class="readonly"
-           readonly>
-</td>
+    <td>
+        <inputclass="readonly"
+            readonly>
+    </td>
 
-<td>
-<td class="acao">
-    <button
-        type="button"
-        onclick="delRow(this)">
-        Excluir
-    </button>
-</td>
+    <td>
+        <input type="text">
+    </td>
+
+    <td>
+        <input type="text">
+    </td>
+
+    <td class="acao">
+        <button
+            type="button"
+            onclick="delRow(this)">
+            Excluir
+        </button>
+    </td>
 
 </tr>
 
