@@ -4,249 +4,98 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Solicitação PCP</title>
-
 <style>
 :root{
-  --navy:#1B3B6F;
-  --navy-dark:#122A52;
-  --gray-bg:#D9D9D9;
-  --border:#BDBDBD;
-  --border-light:#E3E3E3;
-  --text:#2B2B2B;
-  --muted:#6C7A89;
-  --surface:#FFFFFF;
-  --surface-alt:#F5F6F7;
-  --radius:6px;
+--navy:#1B3B6F;--gray:#D9D9D9;--border:#E3E3E3;
 }
-
 *{box-sizing:border-box}
-
-html,body{
-  margin:0;
-  padding:0;
-  width:100%;
-  min-height:100vh;
-  background:#EEF0F2;
-  overflow-x:hidden;
-}
-
-body{
-  font-family:'Segoe UI',Tahoma,Arial,sans-serif;
-  color:var(--text);
-  font-size:16px;
-  padding:20px;
-}
-
-.app-header{
-  display:flex;
-  align-items:center;
-  gap:20px;
-  background:#fff;
-  border:1px solid #E3E3E3;
-  border-radius:6px;
-  padding:16px 24px;
-  margin-bottom:20px;
-}
-
-.brand-mark{
-  font-family:Georgia,serif;
-  font-style:italic;
-  font-weight:800;
-  font-size:30px;
-  color:#1B3B6F;
-}
-
-.brand-divider{
-  width:1px;
-  height:40px;
-  background:#E3E3E3;
-}
-
-.page-heading h1{
-  margin:0;
-  color:#122A52;
-}
-
-.page-heading p{
-  margin:2px 0 0;
-  color:#6C7A89;
-}
-
-.toolbar{
-  margin-bottom:15px;
-}
-
-.btn{
-  border:1px solid #BDBDBD;
-  background:#fff;
-  border-radius:6px;
-  padding:10px 16px;
-  cursor:pointer;
-  font-weight:600;
-}
-
-.btn-danger{
-  color:#B3261E;
-}
-
-.card{
-  background:#fff;
-  border:1px solid #E3E3E3;
-  border-radius:6px;
-}
-
-.wrap{
-  width:100%;
-  overflow-x:auto;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-th,td{
-  border:1px solid #E3E3E3;
-  padding:8px;
-}
-
-th{
-  background:#D9D9D9;
-  text-align:center;
-}
-
-input{
-  width:100%;
-  height:40px;
-  border:1px solid #BDBDBD;
-  border-radius:4px;
-  padding:0 10px;
-}
-
-input.readonly{
-  background:#F5F6F7;
-}
-
-.acao{
-  text-align:center;
-}
+html,body{margin:0;padding:0;width:100%;height:auto;min-height:100%;overflow-x:hidden;overflow-y:visible;background:#EEF0F2}
+body{font-family:Segoe UI,Tahoma,Arial,sans-serif;padding:20px;color:#2b2b2b}
+.app-header{display:flex;align-items:center;gap:20px;background:#fff;border:1px solid var(--border);border-radius:6px;padding:16px 24px;margin-bottom:20px}
+.brand-mark{font:italic 800 30px Georgia,serif;color:var(--navy)}
+.brand-divider{width:1px;height:40px;background:var(--border)}
+.page-heading h1{margin:0;color:#122A52}
+.page-heading p{margin:4px 0 0;color:#6C7A89}
+.toolbar{margin-bottom:15px}
+.btn{padding:10px 16px;border:1px solid #bdbdbd;border-radius:6px;background:#fff;cursor:pointer;font-weight:600}
+.btn-danger{color:#B3261E}
+.card{background:#fff;border:1px solid var(--border);border-radius:6px}
+.wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid var(--border);padding:8px}
+th{background:var(--gray);text-align:center}
+input{width:100%;height:40px;padding:0 10px;border:1px solid #bdbdbd;border-radius:4px}
+.readonly{background:#f5f6f7}
+.acao{text-align:center}
 </style>
-
 <script>
+function notifyParentHeight(){
+ const h=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight);
+ if(window.parentIFrame&&typeof window.parentIFrame.resize==="function"){try{window.parentIFrame.resize()}catch(e){}}
+ try{window.parent.postMessage({type:"resize",height:h},"*")}catch(e){}
+}
 function addRow(){
-    const tbody = document.getElementById('tb');
-    const row = tbody.insertRow();
-    row.innerHTML = document.getElementById('tpl').innerHTML;
-
-    setTimeout(updateIframe,100);
+ const r=document.getElementById("tb").insertRow();
+ r.innerHTML=document.getElementById("tpl").innerHTML;
+ requestAnimationFrame(notifyParentHeight);
 }
-
-function delRow(btn){
-    btn.closest("tr").remove();
-
-    setTimeout(updateIframe,100);
+function delRow(b){
+ b.closest("tr").remove();
+ requestAnimationFrame(notifyParentHeight);
 }
-
-function updateIframe(){
-
-    if(window.parentIFrame){
-        try{
-            window.parentIFrame.resize();
-        }catch(e){}
-    }
-
-    if(window.iFrameResize){
-        try{
-            window.iFrameResize();
-        }catch(e){}
-    }
-}
-
-window.addEventListener("load",function(){
-
-    updateIframe();
-
-    setTimeout(updateIframe,500);
-    setTimeout(updateIframe,1000);
-    setTimeout(updateIframe,2000);
-
+window.addEventListener("load",()=>{
+ notifyParentHeight();
+ if(window.ResizeObserver){
+   new ResizeObserver(notifyParentHeight).observe(document.body);
+ }
+ setTimeout(notifyParentHeight,500);
+ setTimeout(notifyParentHeight,1500);
 });
 </script>
-
 </head>
-
 <body>
-
 <header class="app-header">
-  <div class="brand-mark">SUGGAR</div>
-  <div class="brand-divider"></div>
-
-  <div class="page-heading">
-    <h1>SOLICITAÇÃO PCP</h1>
-    <p>Planejamento e Controle da Produção</p>
-  </div>
+<div class="brand-mark">SUGGAR</div>
+<div class="brand-divider"></div>
+<div class="page-heading">
+<h1>SOLICITAÇÃO PCP</h1>
+<p>Planejamento e Controle da Produção</p>
+</div>
 </header>
 
 <div class="toolbar">
-  <button class="btn" type="button" onclick="addRow()">
-    + Inserir Linha
-  </button>
+<button class="btn" type="button" onclick="addRow()">+ Inserir Linha</button>
 </div>
 
-<div class="card">
-<div class="wrap">
-
+<div class="card"><div class="wrap">
 <table>
-
 <thead>
 <tr>
-<th>CÓD. PRODUTO</th>
-<th>PRODUTO</th>
-<th>QTD</th>
-<th>PRAZO</th>
-<th>AÇÃO</th>
+<th>CÓD. PRODUTO</th><th>PRODUTO</th><th>QTD</th><th>PRAZO</th><th>AÇÃO</th>
 </tr>
 </thead>
-
 <tbody id="tb">
-
 <tr>
-<td><input type="text"></td>
-<td><input type="text" class="readonly" readonly></td>
-<td><input type="text"></td>
-<td><input type="text"></td>
-
-<td class="acao">
-<button class="btn btn-danger" type="button" onclick="delRow(this)">
-Excluir
-</button>
-</td>
+<td><input id="cod1" name="cod1" type="text"></td>
+<td><input id="prod1" name="prod1" class="readonly" readonly></td>
+<td><input id="qtd1" name="qtd1" type="text"></td>
+<td><input id="prazo1" name="prazo1" type="text"></td>
+<td class="acao"><button class="btn btn-danger" type="button" onclick="delRow(this)">Excluir</button></td>
 </tr>
-
 </tbody>
-
 </table>
-
-</div>
-</div>
+</div></div>
 
 <template id="tpl">
 <tr>
-<td><input type="text"></td>
-<td><input type="text" class="readonly" readonly></td>
-<td><input type="text"></td>
-<td><input type="text"></td>
-
-<td class="acao">
-<button class="btn btn-danger" type="button" onclick="delRow(this)">
-Excluir
-</button>
-</td>
+<td><input type="text" name="coduto"></td>
+<td><input type="text" class="readonly" readonly name="produto"></td>
+<td><input type="text" name="qtd"></td>
+<td><input type="text" name="prazo"></td>
+<td class="acao"><button class="btn btn-danger" type="button" onclick="delRow(this)">Excluir</button></td>
 </tr>
 </template>
 
-<!-- ESSENCIAL PARA BPM COM IFRAME-RESIZER -->
-https://cdn.jsdelivr.net/npm/@iframe-resizer/child>
-
+<script src="https://cdn.jsdelivr.net/npm/@iframe-resizer/child"></script>
 </body>
 </html>
