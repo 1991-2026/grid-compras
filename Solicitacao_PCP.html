@@ -3,7 +3,6 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>Solicitação PCP</title>
 
 <style>
@@ -20,18 +19,15 @@
   --radius:6px;
 }
 
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
-html,
-body{
+html,body{
   margin:0;
   padding:0;
   width:100%;
   min-height:100vh;
-  overflow-x:hidden;
   background:#EEF0F2;
+  overflow-x:hidden;
 }
 
 body{
@@ -45,81 +41,58 @@ body{
   display:flex;
   align-items:center;
   gap:20px;
-  background:var(--surface);
-  border:1px solid var(--border-light);
-  border-radius:var(--radius);
+  background:#fff;
+  border:1px solid #E3E3E3;
+  border-radius:6px;
   padding:16px 24px;
   margin-bottom:20px;
-  box-shadow:0 1px 3px rgba(0,0,0,.06);
 }
 
 .brand-mark{
-  font-family:Georgia,'Times New Roman',serif;
-  font-weight:800;
+  font-family:Georgia,serif;
   font-style:italic;
+  font-weight:800;
   font-size:30px;
-  color:var(--navy);
-  white-space:nowrap;
+  color:#1B3B6F;
 }
 
 .brand-divider{
   width:1px;
   height:40px;
-  background:var(--border-light);
+  background:#E3E3E3;
 }
 
 .page-heading h1{
   margin:0;
-  font-size:22px;
-  font-weight:700;
-  color:var(--navy-dark);
+  color:#122A52;
 }
 
 .page-heading p{
   margin:2px 0 0;
-  font-size:14px;
-  color:var(--muted);
+  color:#6C7A89;
 }
 
 .toolbar{
-  margin-bottom:14px;
+  margin-bottom:15px;
 }
 
 .btn{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
+  border:1px solid #BDBDBD;
+  background:#fff;
+  border-radius:6px;
   padding:10px 16px;
-  font-size:15px;
-  font-weight:600;
-  color:var(--navy-dark);
   cursor:pointer;
-}
-
-.btn:hover{
-  background:var(--surface-alt);
+  font-weight:600;
 }
 
 .btn-danger{
   color:#B3261E;
-  padding:8px 14px;
-  font-size:14px;
-}
-
-.btn-danger:hover{
-  background:#FBEAE9;
 }
 
 .card{
-  width:100%;
-  background:var(--surface);
-  border:1px solid var(--border-light);
-  border-radius:var(--radius);
-  overflow:visible;
-  box-shadow:0 1px 3px rgba(0,0,0,.06);
+  background:#fff;
+  border:1px solid #E3E3E3;
+  border-radius:6px;
 }
 
 .wrap{
@@ -130,142 +103,74 @@ body{
 table{
   width:100%;
   border-collapse:collapse;
-  table-layout:fixed;
 }
 
 th,td{
-  border:1px solid var(--border-light);
+  border:1px solid #E3E3E3;
   padding:8px;
 }
 
 th{
-  background:var(--gray-bg);
-  border:1px solid var(--border);
-  padding:12px 8px;
-  font-size:14px;
-  font-weight:700;
-  text-transform:uppercase;
+  background:#D9D9D9;
   text-align:center;
-}
-
-th:nth-child(1),
-td:nth-child(1){
-  width:20%;
-}
-
-th:nth-child(2),
-td:nth-child(2){
-  width:30%;
-}
-
-th:nth-child(3),
-td:nth-child(3){
-  width:15%;
-}
-
-th:nth-child(4),
-td:nth-child(4){
-  width:25%;
-}
-
-th:nth-child(5),
-td:nth-child(5){
-  width:10%;
 }
 
 input{
   width:100%;
   height:40px;
-  padding:0 10px;
-  border:1px solid var(--border);
+  border:1px solid #BDBDBD;
   border-radius:4px;
-  font-size:15px;
+  padding:0 10px;
 }
 
-input.readonly,
-input[readonly]{
-  background:var(--surface-alt);
-  color:#555;
-}
-
-input:focus{
-  outline:none;
-  border-color:var(--navy);
-  box-shadow:0 0 0 3px rgba(27,59,111,.12);
+input.readonly{
+  background:#F5F6F7;
 }
 
 .acao{
   text-align:center;
 }
-
-@media(max-width:768px){
-
-  body{
-    padding:10px;
-  }
-
-  .app-header{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-
-  .brand-divider{
-    display:none;
-  }
-
-}
 </style>
 
 <script>
-
-function resizeParent(){
-
-    const altura = Math.max(
-        document.body.scrollHeight,
-        document.documentElement.scrollHeight,
-        document.body.offsetHeight,
-        document.documentElement.offsetHeight
-    );
-
-    try{
-        window.parent.postMessage({
-            frameHeight: altura
-        }, "*");
-    }catch(e){}
-}
-
 function addRow(){
+    const tbody = document.getElementById('tb');
+    const row = tbody.insertRow();
+    row.innerHTML = document.getElementById('tpl').innerHTML;
 
-    let t = document.getElementById('tb');
-    let r = t.insertRow();
-
-    r.innerHTML =
-        document.getElementById('tpl').innerHTML;
-
-    resizeParent();
+    setTimeout(updateIframe,100);
 }
 
 function delRow(btn){
+    btn.closest("tr").remove();
 
-    btn.closest('tr').remove();
-
-    resizeParent();
+    setTimeout(updateIframe,100);
 }
 
-window.onload = function(){
+function updateIframe(){
 
-    resizeParent();
+    if(window.parentIFrame){
+        try{
+            window.parentIFrame.resize();
+        }catch(e){}
+    }
 
-    setTimeout(resizeParent,500);
-    setTimeout(resizeParent,1000);
-    setTimeout(resizeParent,2000);
+    if(window.iFrameResize){
+        try{
+            window.iFrameResize();
+        }catch(e){}
+    }
+}
 
-};
+window.addEventListener("load",function(){
 
-window.onresize = resizeParent;
+    updateIframe();
 
-setInterval(resizeParent,1000);
+    setTimeout(updateIframe,500);
+    setTimeout(updateIframe,1000);
+    setTimeout(updateIframe,2000);
 
+});
 </script>
 
 </head>
@@ -273,81 +178,75 @@ setInterval(resizeParent,1000);
 <body>
 
 <header class="app-header">
+  <div class="brand-mark">SUGGAR</div>
+  <div class="brand-divider"></div>
 
-    <div class="brand-mark">
-        SUGGAR
-    </div>
-
-    <div class="brand-divider"></div>
-
-    <div class="page-heading">
-        <h1>SOLICITAÇÃO PCP</h1>
-        <p>Planejamento e Controle da Produção</p>
-    </div>
-
+  <div class="page-heading">
+    <h1>SOLICITAÇÃO PCP</h1>
+    <p>Planejamento e Controle da Produção</p>
+  </div>
 </header>
 
 <div class="toolbar">
-    <button class="btn" type="button" onclick="addRow()">
-        + Inserir Linha
-    </button>
+  <button class="btn" type="button" onclick="addRow()">
+    + Inserir Linha
+  </button>
 </div>
 
 <div class="card">
+<div class="wrap">
 
-    <div class="wrap">
+<table>
 
-        <table>
+<thead>
+<tr>
+<th>CÓD. PRODUTO</th>
+<th>PRODUTO</th>
+<th>QTD</th>
+<th>PRAZO</th>
+<th>AÇÃO</th>
+</tr>
+</thead>
 
-            <thead>
+<tbody id="tb">
 
-                <tr>
-                    <th>CÓD. PRODUTO</th>
-                    <th>PRODUTO</th>
-                    <th>QTD</th>
-                    <th>PRAZO</th>
-                    <th>AÇÃO</th>
-                </tr>
+<tr>
+<td><input type="text"></td>
+<td><input type="text" class="readonly" readonly></td>
+<td><input type="text"></td>
+<td><input type="text"></td>
 
-            </thead>
+<td class="acao">
+<button class="btn btn-danger" type="button" onclick="delRow(this)">
+Excluir
+</button>
+</td>
+</tr>
 
-            <tbody id="tb">
+</tbody>
 
-                <tr>
-                    <td><input type="text"></td>
-                    <td><input type="text" class="readonly" readonly></td>
-                    <td><input type="text"></td>
-                    <td><input type="text"></td>
-                    <td class="acao">
-                        <button class="btn btn-danger" type="button" onclick="delRow(this)">
-                            Excluir
-                        </button>
-                    </td>
-                </tr>
+</table>
 
-            </tbody>
-
-        </table>
-
-    </div>
-
+</div>
 </div>
 
 <template id="tpl">
-
 <tr>
-    <td><input type="text"></td>
-    <td><input type="text" class="readonly" readonly></td>
-    <td><input type="text"></td>
-    <td><input type="text"></td>
-    <td class="acao">
-        <button class="btn btn-danger" type="button" onclick="delRow(this)">
-            Excluir
-        </button>
-    </td>
-</tr>
+<td><input type="text"></td>
+<td><input type="text" class="readonly" readonly></td>
+<td><input type="text"></td>
+<td><input type="text"></td>
 
+<td class="acao">
+<button class="btn btn-danger" type="button" onclick="delRow(this)">
+Excluir
+</button>
+</td>
+</tr>
 </template>
+
+<!-- ESSENCIAL PARA BPM COM IFRAME-RESIZER -->
+https://cdn.jsdelivr.net/npm/@iframe-resizer/child>
 
 </body>
 </html>
