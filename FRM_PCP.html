@@ -42,6 +42,7 @@
 .tabela-pcp{
     width:100%;
     border-collapse:collapse;
+    background:#FFF;
 }
 
 .tabela-pcp th{
@@ -49,6 +50,7 @@
     border:1px solid #DDD;
     padding:12px;
     text-align:center;
+    font-weight:600;
 }
 
 .tabela-pcp td{
@@ -160,10 +162,8 @@
     </table>
 
     <div class="total-itens">
-
         Total de itens:
         <span id="totalItens">1</span>
-
     </div>
 
 </div>
@@ -172,9 +172,9 @@
 
 var produtos = [];
 
-/* ===========================
-   CARREGA CSV
-=========================== */
+/* ==========================
+   CARREGAR PRODUTOS
+========================== */
 
 fetch('./PRODUTOS.csv?v=' + new Date().getTime())
 
@@ -186,22 +186,19 @@ fetch('./PRODUTOS.csv?v=' + new Date().getTime())
 
 .then(function(texto){
 
+    texto = texto.replace(/^\uFEFF/, '');
+
     var linhas =
         texto.split(/\r?\n/);
 
-    for(var i=1; i<linhas.length; i++){
+    for(var i = 1; i < linhas.length; i++){
 
         if(!linhas[i].trim()){
             continue;
         }
 
-        var separador =
-            linhas[i].indexOf(';') > -1
-            ? ';'
-            : ',';
-
         var campos =
-            linhas[i].split(separador);
+            linhas[i].split('\t');
 
         if(campos.length < 2){
             continue;
@@ -210,14 +207,12 @@ fetch('./PRODUTOS.csv?v=' + new Date().getTime())
         produtos.push({
 
             codigo:
-                String(campos[0])
-                .replace(/"/g,'')
+                campos[0]
                 .trim()
                 .toUpperCase(),
 
             descricao:
-                String(campos[1])
-                .replace(/"/g,'')
+                campos[1]
                 .trim()
 
         });
@@ -225,7 +220,7 @@ fetch('./PRODUTOS.csv?v=' + new Date().getTime())
     }
 
     console.log(
-        'Produtos carregados:',
+        "Produtos carregados:",
         produtos.length
     );
 
@@ -234,24 +229,23 @@ fetch('./PRODUTOS.csv?v=' + new Date().getTime())
 .catch(function(erro){
 
     console.error(
-        'Erro ao carregar PRODUTOS.csv',
+        "Erro ao carregar PRODUTOS.csv",
         erro
     );
 
 });
 
 
-/* ===========================
+/* ==========================
    BUSCAR PRODUTO
-=========================== */
+========================== */
 
 function buscarProduto(campo){
 
     var codigo =
         campo.value
-        .replace(/"/g,'')
-        .trim()
-        .toUpperCase();
+             .trim()
+             .toUpperCase();
 
     var linha =
         campo.closest('tr');
@@ -259,31 +253,18 @@ function buscarProduto(campo){
     var campoProduto =
         linha.querySelector('.produto');
 
-    if(codigo === ''){
+    campoProduto.value = '';
 
-        campoProduto.value = '';
+    if(!codigo){
         return;
-
     }
 
-    var encontrado = null;
+    var encontrado =
+        produtos.find(function(item){
 
-    for(var i=0; i<produtos.length; i++){
+            return item.codigo === codigo;
 
-        if(
-            produtos[i].codigo
-            .trim()
-            .toUpperCase() === codigo
-        ){
-
-            encontrado =
-                produtos[i];
-
-            break;
-
-        }
-
-    }
+        });
 
     if(encontrado){
 
@@ -293,6 +274,9 @@ function buscarProduto(campo){
         campoProduto.style.color =
             '#333';
 
+        campoProduto.style.fontWeight =
+            '500';
+
     }else{
 
         campoProduto.value =
@@ -301,28 +285,44 @@ function buscarProduto(campo){
         campoProduto.style.color =
             '#D9534F';
 
+        campoProduto.style.fontWeight =
+            '600';
+
     }
 
 }
 
 
-/* ===========================
-   INSERIR LINHA
-=========================== */
+/* ==========================
+   CONTADOR
+========================== */
 
-document.getElementById(
-    'btnInserir'
-).onclick = function(){
+function atualizarTotal(){
+
+    document.getElementById(
+        'totalItens'
+    ).innerHTML =
+
+    document.querySelectorAll(
+        '#tb tr'
+    ).length;
+
+}
+
+
+/* ==========================
+   INSERIR LINHA
+========================== */
+
+document
+.getElementById('btnInserir')
+.onclick = function(){
 
     var tbody =
-        document.getElementById(
-            'tb'
-        );
+        document.getElementById('tb');
 
     var linha =
-        document.createElement(
-            'tr'
-        );
+        document.createElement('tr');
 
     linha.innerHTML = `
 
@@ -365,18 +365,16 @@ document.getElementById(
 
     `;
 
-    tbody.appendChild(
-        linha
-    );
+    tbody.appendChild(linha);
 
     atualizarTotal();
 
 };
 
 
-/* ===========================
+/* ==========================
    EXCLUIR LINHA
-=========================== */
+========================== */
 
 document.addEventListener(
 
@@ -412,21 +410,9 @@ document.addEventListener(
 );
 
 
-/* ===========================
-   TOTAL ITENS
-=========================== */
-
-function atualizarTotal(){
-
-    document.getElementById(
-        'totalItens'
-    ).innerHTML =
-
-    document.querySelectorAll(
-        '#tb tr'
-    ).length;
-
-}
+/* ==========================
+   INICIALIZAÇÃO
+========================== */
 
 window.onload = function(){
 
