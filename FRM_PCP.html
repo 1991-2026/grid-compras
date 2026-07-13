@@ -6,19 +6,12 @@
 
 <title>Solicitação PCP</title>
 
-<!-- BPM IMPORTS -->
-<script src="https://cdnjs..5.14/iframeResizer.contentWindow.min.js"></script>
-.br/platform/4.7.3/js/workflow-cockpit.js"></script>
-<!-- BPM IMPORTS -->
-
 <style>
-
 :root{
     --navy:#1B3B6F;
     --navy-dark:#122A52;
     --border:#BDBDBD;
     --border-light:#E3E3E3;
-    --surface:#FFFFFF;
     --muted:#6C7A89;
 }
 
@@ -29,8 +22,8 @@
 body{
     margin:0;
     padding:20px;
-    font-family:Segoe UI,Tahoma,sans-serif;
     background:#eef0f2;
+    font-family:Segoe UI,Tahoma,sans-serif;
 }
 
 .app-header{
@@ -47,8 +40,8 @@ body{
 .brand-mark{
     font-size:30px;
     font-weight:800;
-    color:var(--navy);
     font-style:italic;
+    color:var(--navy);
 }
 
 .brand-divider{
@@ -63,7 +56,7 @@ body{
 }
 
 .page-heading p{
-    margin:4px 0 0;
+    margin:5px 0 0;
     color:var(--muted);
 }
 
@@ -73,15 +66,11 @@ body{
 
 .btn{
     padding:10px 15px;
-    border:1px solid #BDBDBD;
+    border:1px solid #bdbdbd;
     border-radius:6px;
-    background:white;
+    background:#fff;
     cursor:pointer;
     font-weight:600;
-}
-
-.btn:hover{
-    background:#f4f4f4;
 }
 
 .btn-danger{
@@ -89,7 +78,7 @@ body{
 }
 
 .card{
-    background:white;
+    background:#fff;
     border-radius:6px;
     border:1px solid #e3e3e3;
     padding:10px;
@@ -102,170 +91,33 @@ table{
 
 th{
     background:#d9d9d9;
+    border:1px solid #bdbdbd;
     padding:10px;
-    border:1px solid #BDBDBD;
+    text-align:center;
 }
 
 td{
-    padding:5px;
-    border:1px solid #E3E3E3;
+    border:1px solid #e3e3e3;
+    padding:8px;
 }
 
 input{
     width:100%;
     height:38px;
-    border:1px solid #BDBDBD;
+    border:1px solid #bdbdbd;
     border-radius:4px;
-    padding:5px 10px;
+    padding:0 10px;
 }
 
-.produto{
+input[readonly]{
     background:#f5f6f7;
 }
 
 .acao{
     width:120px;
+    text-align:center;
 }
-
 </style>
-
-<script>
-
-const URL_PRODUTOS = "SUA_URL_ODATA_AQUI";
-
-function resizeFormulario(){
-
-    try{
-        if(window.parentIFrame){
-            window.parentIFrame.size();
-        }
-    }catch(e){
-        console.log(e);
-    }
-}
-
-async function buscarProduto(campo){
-
-    const codigo = campo.value.trim();
-
-    if(!codigo){
-        return;
-    }
-
-    const linha = campo.closest("tr");
-    const produto = linha.querySelector(".produto");
-
-    try{
-
-        const response = await fetch(
-            `${URL_PRODUTOS}?$filter=codigo eq '${codigo}'`
-        );
-
-        const dados = await response.json();
-
-        if(dados.value && dados.value.length){
-
-            produto.value =
-                dados.value[0].descricao || "";
-
-        }else{
-
-            produto.value = "";
-
-            alert("Código não encontrado");
-
-        }
-
-    }catch(e){
-
-        console.error(e);
-
-        produto.value = "";
-
-    }
-
-    resizeFormulario();
-}
-
-function addRow(){
-
-    const tbody =
-        document.getElementById("tb");
-
-    const novaLinha =
-        document.createElement("tr");
-
-    novaLinha.innerHTML = `
-        <td>
-            <input type="text"
-                   name="codigo"
-                   onblur="buscarProduto(this)">
-        </td>
-
-        <td>
-            <input type="text"
-                   class="produto"
-                   readonly>
-        </td>
-
-        <td>
-            <input type="text"
-                   name="qtd">
-        </td>
-
-        <td>
-            <input type="text"
-                   name="prazo">
-        </td>
-
-        <td class="acao">
-            <button
-                type="button"
-                class="btn btn-danger"
-                onclick="delRow(this)">
-                Excluir
-            </button>
-        </td>
-    `;
-
-    tbody.appendChild(novaLinha);
-
-    resizeFormulario();
-}
-
-function delRow(botao){
-
-    const linha = botao.closest("tr");
-
-    const tbody =
-        document.getElementById("tb");
-
-    if(tbody.rows.length > 1){
-
-        linha.remove();
-
-    }
-
-    resizeFormulario();
-}
-
-window.onload = function(){
-
-    resizeFormulario();
-
-    if(window.ResizeObserver){
-
-        new ResizeObserver(function(){
-
-            resizeFormulario();
-
-        }).observe(document.body);
-
-    }
-
-};
-
-</script>
 
 </head>
 
@@ -291,7 +143,7 @@ window.onload = function(){
     <button
         type="button"
         class="btn"
-        onclick="addRow()">
+        id="btnInserir">
 
         + Inserir Linha
 
@@ -304,7 +156,6 @@ window.onload = function(){
 <table>
 
     <thead>
-
         <tr>
             <th>CÓD. PRODUTO</th>
             <th>PRODUTO</th>
@@ -312,52 +163,34 @@ window.onload = function(){
             <th>PRAZO</th>
             <th>AÇÃO</th>
         </tr>
-
     </thead>
 
     <tbody id="tb">
 
         <tr>
-
             <td>
-                <input
-                    type="text"
-                    name="codigo"
-                    onblur="buscarProduto(this)">
+                <input type="text" name="codigo">
             </td>
 
             <td>
-                <input
-                    type="text"
-                    class="produto"
-                    readonly>
+                <input type="text" class="produto" readonly>
             </td>
 
             <td>
-                <input
-                    type="text"
-                    name="qtd">
+                <input type="text" name="qtd">
             </td>
 
             <td>
-                <input
-                    type="text"
-                    name="prazo">
+                <input type="text" name="prazo">
             </td>
 
             <td class="acao">
-
                 <button
                     type="button"
-                    class="btn btn-danger"
-                    onclick="delRow(this)">
-
+                    class="btn btn-danger excluir">
                     Excluir
-
                 </button>
-
             </td>
-
         </tr>
 
     </tbody>
@@ -365,6 +198,63 @@ window.onload = function(){
 </table>
 
 </div>
+
+<script>
+
+const tbody = document.getElementById("tb");
+const btnInserir = document.getElementById("btnInserir");
+
+btnInserir.addEventListener("click", function(){
+
+    const linha = document.createElement("tr");
+
+    linha.innerHTML = `
+        <td>
+            <input type="text" name="codigo">
+        </td>
+
+        <td>
+            <input type="text" class="produto" readonly>
+        </td>
+
+        <td>
+            <input type="text" name="qtd">
+        </td>
+
+        <td>
+            <input type="text" name="prazo">
+        </td>
+
+        <td class="acao">
+            <button
+                type="button"
+                class="btn btn-danger excluir">
+                Excluir
+            </button>
+        </td>
+    `;
+
+    tbody.appendChild(linha);
+
+});
+
+tbody.addEventListener("click", function(e){
+
+    if(e.target.classList.contains("excluir")){
+
+        const linhas = tbody.querySelectorAll("tr");
+
+        if(linhas.length > 1){
+
+            e.target.closest("tr").remove();
+
+        }
+
+    }
+
+});
+
+</script>
 
 </body>
 </html>
