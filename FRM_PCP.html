@@ -49,8 +49,8 @@
     background:#F3F3F3;
     border:1px solid #DDD;
     padding:12px;
-    text-align:center;
     font-weight:600;
+    text-align:center;
 }
 
 .tabela-pcp td{
@@ -103,7 +103,6 @@
     <table class="tabela-pcp">
 
         <thead>
-
             <tr>
                 <th style="width:15%">Cód. Produto</th>
                 <th style="width:40%">Produto</th>
@@ -111,7 +110,6 @@
                 <th style="width:20%">Prazo</th>
                 <th style="width:10%">Ação</th>
             </tr>
-
         </thead>
 
         <tbody id="tb">
@@ -170,83 +168,45 @@
 
 <script>
 
-var produtos = [];
+var produtos = [
 
-/* ==========================
-   CARREGAR PRODUTOS
-========================== */
+{
+ codigo:"TP62BM",
+ descricao:"Dep Suggar Vega 60CM 220V C/Lum"
+},
+{
+ codigo:"AD2422PT",
+ descricao:"Adega Nantes Suggar 24 G 220V"
+},
+{
+ codigo:"CT2822BR",
+ descricao:"Centrifuga Suggar Branca 220V"
+},
+{
+ codigo:"DP62IX",
+ descricao:"Depurador Orion 60CM Inox 220V"
+},
+{
+ codigo:"EF8662CXBR",
+ descricao:"Espremedor de Frutas Suggar 220V CX C/12"
+},
+{
+ codigo:"FE4222BR",
+ descricao:"Forno Eletrico Suggar Branco 42 Litros 220V"
+},
+{
+ codigo:"105008",
+ descricao:"Suporte de fixacao do queimador"
+}
 
-ffetch('./PRODUTOS.csv?v=' + new Date().getTime())
-.then(response => response.text())
-.then(texto => {
-
-    console.log("CSV COMPLETO:");
-    console.log(texto);
-
-});
-
-.then(function(texto){
-
-    texto = texto.replace(/^\uFEFF/, '');
-
-    var linhas =
-        texto.split(/\r?\n/);
-
-    for(var i = 1; i < linhas.length; i++){
-
-        if(!linhas[i].trim()){
-            continue;
-        }
-
-        var campos =
-            linhas[i].split('\t');
-
-        if(campos.length < 2){
-            continue;
-        }
-
-        produtos.push({
-
-            codigo:
-                campos[0]
-                .trim()
-                .toUpperCase(),
-
-            descricao:
-                campos[1]
-                .trim()
-
-        });
-
-    }
-
-    console.log(
-        "Produtos carregados:",
-        produtos.length
-    );
-
-})
-
-.catch(function(erro){
-
-    console.error(
-        "Erro ao carregar PRODUTOS.csv",
-        erro
-    );
-
-});
-
-
-/* ==========================
-   BUSCAR PRODUTO
-========================== */
+];
 
 function buscarProduto(campo){
 
     var codigo =
         campo.value
-             .trim()
-             .toUpperCase();
+        .trim()
+        .toUpperCase();
 
     var linha =
         campo.closest('tr');
@@ -275,9 +235,6 @@ function buscarProduto(campo){
         campoProduto.style.color =
             '#333';
 
-        campoProduto.style.fontWeight =
-            '500';
-
     }else{
 
         campoProduto.value =
@@ -286,17 +243,9 @@ function buscarProduto(campo){
         campoProduto.style.color =
             '#D9534F';
 
-        campoProduto.style.fontWeight =
-            '600';
-
     }
 
 }
-
-
-/* ==========================
-   CONTADOR
-========================== */
 
 function atualizarTotal(){
 
@@ -309,11 +258,6 @@ function atualizarTotal(){
     ).length;
 
 }
-
-
-/* ==========================
-   INSERIR LINHA
-========================== */
 
 document
 .getElementById('btnInserir')
@@ -353,15 +297,11 @@ document
         </td>
 
         <td style="text-align:center">
-
             <button
                 type="button"
                 class="btn-delete excluir">
-
                 Excluir
-
             </button>
-
         </td>
 
     `;
@@ -372,15 +312,8 @@ document
 
 };
 
-
-/* ==========================
-   EXCLUIR LINHA
-========================== */
-
 document.addEventListener(
-
     'click',
-
     function(e){
 
         if(
@@ -407,13 +340,7 @@ document.addEventListener(
         }
 
     }
-
 );
-
-
-/* ==========================
-   INICIALIZAÇÃO
-========================== */
 
 window.onload = function(){
 
