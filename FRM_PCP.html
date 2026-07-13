@@ -1,196 +1,81 @@
-<div style="font-family:Segoe UI,Arial,sans-serif;padding:15px;">
+<style>
+.pcp{
+    font-family:Segoe UI,Arial,sans-serif;
+    padding:20px;
+}
 
-    <div style="margin-bottom:20px;">
-        <h2 style="
-            margin:0;
-            color:#17a589;
-            font-size:24px;
-            font-weight:600;">
-            Solicitação PCP
-        </h2>
+.pcp h2{
+    color:#17a589;
+    margin-bottom:5px;
+}
 
-        <div style="
-            color:#7f8c8d;
-            font-size:13px;
-            margin-top:4px;">
-            Planejamento e Controle da Produção
-        </div>
-    </div>
+.pcp p{
+    color:#777;
+    margin-bottom:20px;
+}
 
-    <div style="margin-bottom:15px;">
+.pcp table{
+    width:100%;
+    border-collapse:collapse;
+}
 
-        <button
-            type="button"
-            id="btnInserir"
-            style="
-                background:#17a589;
-                color:#fff;
-                border:none;
-                border-radius:3px;
-                padding:10px 18px;
-                cursor:pointer;
-                font-size:13px;
-                font-weight:600;">
+.pcp th{
+    background:#f5f5f5;
+    padding:10px;
+    border:1px solid #ddd;
+}
 
-            + Inserir Item
+.pcp td{
+    padding:10px;
+    border:1px solid #ddd;
+}
 
-        </button>
+.pcp input{
+    width:100%;
+    height:35px;
+}
 
-    </div>
+.btn{
+    background:#17a589;
+    border:none;
+    color:white;
+    padding:10px 15px;
+    cursor:pointer;
+}
+</style>
 
-    <div style="
-        background:#fff;
-        border:1px solid #dcdcdc;
-        padding:15px;">
+<div class="pcp">
 
-        <table
-            style="
-                width:100%;
-                border-collapse:collapse;">
+    <h2>Solicitação PCP</h2>
 
-            <thead>
+    <p>Planejamento e Controle da Produção</p>
 
-                <tr style="background:#f5f5f5;">
+    <button class="btn">
+        + Inserir Linha
+    </button>
 
-                    <th style="padding:10px;border:1px solid #ddd;">
-                        Código Produto
-                    </th>
+    <br><br>
 
-                    <th style="padding:10px;border:1px solid #ddd;">
-                        Produto
-                    </th>
+    <table>
 
-                    <th style="padding:10px;border:1px solid #ddd;">
-                        Quantidade
-                    </th>
+        <tr>
 
-                    <th style="padding:10px;border:1px solid #ddd;">
-                        Prazo
-                    </th>
+            <th>Cód. Produto</th>
+            <th>Produto</th>
+            <th>Qtd</th>
+            <th>Prazo</th>
 
-                    <th style="padding:10px;border:1px solid #ddd;">
-                        Ação
-                    </th>
+        </tr>
 
-                </tr>
+        <tr>
 
-            </thead>
+            <td><input></td>
+            <td><input></td>
+            <td><input></td>
+            <td><input></td>
 
-            <tbody id="tb">
+        </tr>
 
-                <tr>
-
-                    <td style="padding:8px;border:1px solid #ddd;">
-                        <input style="width:100%;height:34px;">
-                    </td>
-
-                    <td style="padding:8px;border:1px solid #ddd;">
-                        <input style="width:100%;height:34px;background:#f9f9f9;" readonly>
-                    </td>
-
-                    <td style="padding:8px;border:1px solid #ddd;">
-                        <input style="width:100%;height:34px;">
-                    </td>
-
-                    <td style="padding:8px;border:1px solid #ddd;">
-                        <input style="width:100%;height:34px;">
-                    </td>
-
-                    <td style="padding:8px;border:1px solid #ddd;text-align:center;">
-
-                        <button
-                            type="button"
-                            class="btnExcluir"
-                            style="
-                                background:#e74c3c;
-                                color:white;
-                                border:none;
-                                border-radius:3px;
-                                padding:7px 12px;
-                                cursor:pointer;">
-
-                            Excluir
-
-                        </button>
-
-                    </td>
-
-                </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
+    </table>
 
 </div>
-
-<script>
-
-(function(){
-
-    function adicionarLinha(){
-
-        var tbody =
-            document.getElementById("tb");
-
-        var tr =
-            document.createElement("tr");
-
-        tr.innerHTML = `
-            <td style="padding:8px;border:1px solid #ddd;">
-                <input style="width:100%;height:34px;">
-            </td>
-
-            <td style="padding:8px;border:1px solid #ddd;">
-                <input readonly style="width:100%;height:34px;background:#f9f9f9;">
-            </td>
-
-            <td style="padding:8px;border:1px solid #ddd;">
-                <input style="width:100%;height:34px;">
-            </td>
-
-            <td style="padding:8px;border:1px solid #ddd;">
-                <input style="width:100%;height:34px;">
-            </td>
-
-            <td style="padding:8px;border:1px solid #ddd;text-align:center;">
-                <button
-                    type="button"
-                    class="btnExcluir"
-                    style="
-                        background:#e74c3c;
-                        color:white;
-                        border:none;
-                        border-radius:3px;
-                        padding:7px 12px;
-                        cursor:pointer;">
-                    Excluir
-                </button>
-            </td>
-        `;
-
-        tbody.appendChild(tr);
-    }
-
-    document.addEventListener("click", function(e){
-
-        if(e.target.id === "btnInserir"){
-            adicionarLinha();
-        }
-
-        if(e.target.classList.contains("btnExcluir")){
-
-            var linhas =
-                document.querySelectorAll("#tb tr");
-
-            if(linhas.length > 1){
-                e.target.closest("tr").remove();
-            }
-        }
-
-    });
-
-})();
-
-</script>
