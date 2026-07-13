@@ -1,17 +1,6 @@
 <style>
-:root{
-    --navy:#1B3B6F;
-    --navy-dark:#122A52;
-    --border:#BDBDBD;
-    --border-light:#E3E3E3;
-    --muted:#6C7A89;
-}
-
-*{
-    box-sizing:border-box;
-}
-
 .container-pcp{
+    width:100%;
     padding:15px;
     font-family:Segoe UI,Tahoma,sans-serif;
 }
@@ -20,34 +9,32 @@
     display:flex;
     align-items:center;
     gap:20px;
-    background:#fff;
-    border:1px solid #e3e3e3;
-    border-radius:6px;
-    padding:16px 24px;
     margin-bottom:20px;
+    padding:15px;
+    border:1px solid #DDD;
+    border-radius:5px;
+    background:#FFF;
 }
 
-.brand-mark{
-    font-size:30px;
-    font-weight:800;
+.brand{
+    font-size:34px;
+    font-weight:bold;
     font-style:italic;
-    color:var(--navy);
+    color:#163A70;
 }
 
-.brand-divider{
-    width:1px;
-    height:40px;
-    background:#e3e3e3;
+.titulo{
+    border-left:1px solid #DDD;
+    padding-left:20px;
 }
 
-.page-heading h1{
+.titulo h2{
     margin:0;
-    color:var(--navy-dark);
+    color:#163A70;
 }
 
-.page-heading p{
-    margin:5px 0 0;
-    color:var(--muted);
+.titulo span{
+    color:#666;
 }
 
 .toolbar{
@@ -55,27 +42,27 @@
 }
 
 .btn{
-    padding:8px 15px;
-    border:1px solid #bdbdbd;
-    border-radius:4px;
-    background:#fff;
+    padding:8px 18px;
+    border:1px solid #BBB;
+    background:#FFF;
     cursor:pointer;
-    font-weight:600;
+    border-radius:4px;
 }
 
 .btn:hover{
-    background:#f5f5f5;
+    background:#F5F5F5;
 }
 
 .btn-danger{
-    color:#B3261E;
+    color:#B00020;
 }
 
 .card{
-    background:#fff;
-    border:1px solid #ddd;
-    border-radius:6px;
+    border:1px solid #DDD;
+    border-radius:5px;
     padding:10px;
+    background:#FFF;
+    overflow:auto;
 }
 
 table{
@@ -84,27 +71,24 @@ table{
 }
 
 th{
-    background:#d9d9d9;
-    border:1px solid #bdbdbd;
+    background:#D9D9D9;
+    border:1px solid #BDBDBD;
     padding:10px;
-    text-align:center;
 }
 
 td{
-    border:1px solid #e3e3e3;
-    padding:8px;
+    border:1px solid #E3E3E3;
+    padding:6px;
 }
 
 input{
     width:100%;
     height:34px;
-    border:1px solid #bdbdbd;
-    border-radius:4px;
-    padding:0 8px;
+    padding:5px;
 }
 
-input[readonly]{
-    background:#f5f5f5;
+.produto{
+    background:#F5F5F5;
 }
 
 .acao{
@@ -117,28 +101,21 @@ input[readonly]{
 
     <div class="app-header">
 
-        <div class="brand-mark">
+        <div class="brand">
             SUGGAR
         </div>
 
-        <div class="brand-divider"></div>
-
-        <div class="page-heading">
-            <h1>SOLICITAÇÃO PCP</h1>
-            <p>Planejamento e Controle da Produção</p>
+        <div class="titulo">
+            <h2>SOLICITAÇÃO PCP</h2>
+            <span>Planejamento e Controle da Produção</span>
         </div>
 
     </div>
 
     <div class="toolbar">
 
-        <button
-            type="button"
-            class="btn"
-            id="btnInserir">
-
+        <button class="btn" id="btnInserir" type="button">
             + Inserir Linha
-
         </button>
 
     </div>
@@ -151,11 +128,11 @@ input[readonly]{
 
                 <tr>
 
-                    <th>CÓD. PRODUTO</th>
-                    <th>PRODUTO</th>
-                    <th>QTD</th>
-                    <th>PRAZO</th>
-                    <th>AÇÃO</th>
+                    <th style="width:20%">CÓD. PRODUTO</th>
+                    <th style="width:40%">PRODUTO</th>
+                    <th style="width:15%">QTD</th>
+                    <th style="width:15%">PRAZO</th>
+                    <th style="width:10%">AÇÃO</th>
 
                 </tr>
 
@@ -165,30 +142,18 @@ input[readonly]{
 
                 <tr>
 
-                    <td>
-                        <input type="text" name="codigo">
-                    </td>
+                    <td><input name="codigo"></td>
 
-                    <td>
-                        <input type="text" class="produto" readonly>
-                    </td>
+                    <td><input class="produto" readonly></td>
 
-                    <td>
-                        <input type="text" name="qtd">
-                    </td>
+                    <td><input name="qtd"></td>
 
-                    <td>
-                        <input type="text" name="prazo">
-                    </td>
+                    <td><input name="prazo"></td>
 
                     <td class="acao">
 
-                        <button
-                            type="button"
-                            class="btn btn-danger excluir">
-
+                        <button type="button" class="btn btn-danger excluir">
                             Excluir
-
                         </button>
 
                     </td>
@@ -207,42 +172,38 @@ input[readonly]{
 
 (function(){
 
-    const tbody=document.getElementById("tb");
-    const btnInserir=document.getElementById("btnInserir");
+    function criarLinha(){
 
-    if(!tbody || !btnInserir){
-        return;
+        var tr=document.createElement("tr");
+
+        tr.innerHTML=
+        '<td><input name="codigo"></td>'+
+        '<td><input class="produto" readonly></td>'+
+        '<td><input name="qtd"></td>'+
+        '<td><input name="prazo"></td>'+
+        '<td class="acao">'+
+        '<button type="button" class="btn btn-danger excluir">Excluir</button>'+
+        '</td>';
+
+        return tr;
+
     }
 
-    btnInserir.onclick=function(){
+    var tbody=document.getElementById("tb");
 
-        const linha=document.createElement("tr");
+    document.getElementById("btnInserir").onclick=function(){
 
-        linha.innerHTML=`
-            <td><input type="text" name="codigo"></td>
-            <td><input type="text" class="produto" readonly></td>
-            <td><input type="text" name="qtd"></td>
-            <td><input type="text" name="prazo"></td>
-            <td class="acao">
-                <button
-                    type="button"
-                    class="btn btn-danger excluir">
-                    Excluir
-                </button>
-            </td>
-        `;
-
-        tbody.appendChild(linha);
+        tbody.appendChild(criarLinha());
 
     };
 
     tbody.onclick=function(e){
 
-        if(e.target.classList.contains("excluir")){
+        if(e.target.className.indexOf("excluir")>-1){
 
-            if(tbody.querySelectorAll("tr").length>1){
+            if(tbody.rows.length>1){
 
-                e.target.closest("tr").remove();
+                e.target.parentNode.parentNode.remove();
 
             }
 
