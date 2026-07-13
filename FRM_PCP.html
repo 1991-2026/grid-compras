@@ -171,6 +171,8 @@
 
 <script>
 
+console.log("FRM_PCP carregado");
+
 var produtos = [
 
 {
@@ -376,11 +378,24 @@ atualizarDadosProcesso();
     }
 );
 
-window.onload = function(){
+window.addEventListener('load', function(){
 
-    atualizarTotal();
-    atualizarDadosProcesso();
+    try{
 
-};
+        if(window.parent){
+
+            window.parent.postMessage({
+                type:'loaded'
+            }, '*');
+
+        }
+
+    }catch(e){
+
+        console.log(e);
+
+    }
+
+});
 
 </script>
