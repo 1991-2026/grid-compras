@@ -29,10 +29,6 @@
     cursor:pointer;
 }
 
-.btn-add:hover{
-    background:#0F4CA7;
-}
-
 .btn-delete{
     background:#D9534F;
     color:#FFF;
@@ -71,7 +67,7 @@
 }
 
 .produto{
-    background:#F9F9F9;
+    background:#F7F7F7;
 }
 
 </style>
@@ -103,10 +99,10 @@
 
             <tr>
                 <th style="width:15%">Cód. Produto</th>
-                <th style="width:35%">Produto</th>
+                <th style="width:40%">Produto</th>
                 <th style="width:15%">Qtd</th>
                 <th style="width:20%">Prazo</th>
-                <th style="width:15%">Ação</th>
+                <th style="width:10%">Ação</th>
             </tr>
 
         </thead>
@@ -116,7 +112,9 @@
             <tr>
 
                 <td>
-                    <input type="text" name="codigo[]">
+                    <input
+                        type="text"
+                        class="codigo-produto">
                 </td>
 
                 <td>
@@ -127,11 +125,13 @@
                 </td>
 
                 <td>
-                    <input type="text" name="qtd[]">
+                    <input
+                        type="number">
                 </td>
 
                 <td>
-                    <input type="date" name="prazo[]">
+                    <input
+                        type="date">
                 </td>
 
                 <td style="text-align:center">
@@ -156,57 +156,198 @@
 
 <script>
 
-(function(){
+var produtos = [];
 
-    var botaoInserir =
-        document.getElementById('btnInserir');
+/* Carrega PRODUTOS.csv */
 
-    if(botaoInserir){
+fetch('./PRODUTOS.csv')
+.then(function(response){
 
-        botaoInserir.onclick = function(){
+    return response.text();
 
-            var tbody =
-                document.getElementById('tb');
+})
+.then(function(texto){
 
-            var novaLinha =
-                document.createElement('tr');
+    var linhas =
+        texto.split(/\r?\n/);
 
-            novaLinha.innerHTML =
-            '<td><input type="text" name="codigo[]"></td>' +
-            '<td><input type="text" class="produto" readonly></td>' +
-            '<td><input type="text" name="qtd[]"></td>' +
-            '<td><input type="date" name="prazo[]"></td>' +
-            '<td style="text-align:center">' +
-            '<button type="button" class="btn-delete excluir">Excluir</button>' +
-            '</td>';
+    for(var i=1; i<linhas.length; i++){
 
-            tbody.appendChild(novaLinha);
+        if(!linhas[i].trim()){
+            continue;
+        }
 
-        };
+        var campos =
+            linhas[i].split(';');
 
+        if(campos.length < 2){
+            continue;
+        }
+
+        produtos.push({
+
+            codigo:
+                campos[0]
+                .trim()
+                .toUpperCase(),
+
+            descricao:
+                campos[1]
+                .trim()
+
+        });
     }
 
-    document.onclick = function(e){
+    console.log(
+        'Produtos carregados:',
+        produtos.length
+    );
 
-        var elemento = e.target;
+})
+.catch(function(erro){
+
+    console.error(
+        'Erro carregando PRODUTOS.csv',
+        erro
+    );
+
+});
+
+/* Busca Produto */
+
+function buscarProduto(campo){
+
+    var codigo =
+        campo.value
+        .trim()
+        .toUpperCase();
+
+    var linha =
+        campo.closest('tr');
+
+    var campoProduto =
+        linha.querySelector('.produto');
+
+    var encontrado =
+        produtos.find(function(item){
+
+            return item.codigo === codigo;
+
+        });
+
+    if(encontrado){
+
+        campoProduto.value =
+            encontrado.descricao;
+
+    }else{
+
+        campoProduto.value = '';
+
+    }
+}
+
+/* Inserir Linha */
+
+document
+.getElementById('btnInserir')
+.onclick = function(){
+
+    var tbody =
+        document.getElementById('tb');
+
+    var linha =
+        document.createElement('tr');
+
+    linha.innerHTML = `
+
+        <td>
+            <input
+                type="text"
+                class="codigo-produto">
+        </td>
+
+        <td>
+            <input
+                type="text"
+                class="produto"
+                readonly>
+        </td>
+
+        <td>
+            <input type="number">
+        </td>
+
+        <td>
+            <input type="date">
+        </td>
+
+        <td style="text-align:center">
+
+            <button
+                type="button"
+                class="btn-delete excluir">
+
+                Excluir
+
+            </button>
+
+        </td>
+
+    `;
+
+    tbody.appendChild(linha);
+
+};
+
+/* Eventos Dinâmicos */
+
+document.addEventListener(
+    'blur',
+    function(e){
 
         if(
-            elemento &&
-            elemento.className.indexOf('excluir') >= 0
+            e.target.classList.contains(
+                'codigo-produto'
+            )
+        ){
+
+            buscarProduto(
+                e.target
+            );
+
+        }
+
+    },
+    true
+);
+
+document.addEventListener(
+    'click',
+    function(e){
+
+        if(
+            e.target.classList.contains(
+                'excluir'
+            )
         ){
 
             var linhas =
-                document.querySelectorAll('#tb tr');
+                document.querySelectorAll(
+                    '#tb tr'
+                );
 
             if(linhas.length > 1){
 
-                elemento.closest('tr').remove();
+                e.target
+                 .closest('tr')
+                 .remove();
 
             }
+
         }
 
-    };
-
-})();
+    }
+);
 
 </script>
