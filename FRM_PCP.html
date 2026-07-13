@@ -1,81 +1,228 @@
 <style>
-.pcp{
-    font-family:Segoe UI,Arial,sans-serif;
+
+.pcp-container{
+    font-family:'Segoe UI',Arial,sans-serif;
     padding:20px;
 }
 
-.pcp h2{
-    color:#17a589;
+.pcp-title{
+    color:#0B3A82;
+    font-size:24px;
+    font-weight:600;
     margin-bottom:5px;
 }
 
-.pcp p{
-    color:#777;
+.pcp-subtitle{
+    color:#6c757d;
     margin-bottom:20px;
+    font-size:14px;
 }
 
-.pcp table{
+.btn-add{
+    background:#0B3A82;
+    color:#fff;
+    border:none;
+    border-radius:4px;
+    padding:10px 18px;
+    cursor:pointer;
+    font-size:13px;
+    font-weight:600;
+}
+
+.btn-add:hover{
+    background:#11489e;
+}
+
+.btn-delete{
+    background:#d9534f;
+    color:#fff;
+    border:none;
+    border-radius:4px;
+    padding:7px 12px;
+    cursor:pointer;
+    font-size:12px;
+}
+
+.tabela-pcp{
     width:100%;
     border-collapse:collapse;
+    background:#fff;
 }
 
-.pcp th{
+.tabela-pcp th{
     background:#f5f5f5;
-    padding:10px;
     border:1px solid #ddd;
+    padding:10px;
+    text-align:center;
+    font-weight:600;
 }
 
-.pcp td{
-    padding:10px;
+.tabela-pcp td{
     border:1px solid #ddd;
+    padding:8px;
 }
 
-.pcp input{
+.tabela-pcp input{
     width:100%;
-    height:35px;
+    height:36px;
+    border:1px solid #ccc;
+    border-radius:3px;
+    padding:0 8px;
 }
 
-.btn{
-    background:#17a589;
-    border:none;
-    color:white;
-    padding:10px 15px;
-    cursor:pointer;
+.produto{
+    background:#f8f9fa;
 }
+
 </style>
 
-<div class="pcp">
+<div class="pcp-container">
 
-    <h2>Solicitação PCP</h2>
+    <div class="pcp-title">
+        Solicitação PCP
+    </div>
 
-    <p>Planejamento e Controle da Produção</p>
+    <div class="pcp-subtitle">
+        Planejamento e Controle da Produção
+    </div>
 
-    <button class="btn">
+    <button
+        id="btnInserir"
+        type="button"
+        class="btn-add">
+
         + Inserir Linha
+
     </button>
 
     <br><br>
 
-    <table>
+    <table class="tabela-pcp">
 
-        <tr>
+        <thead>
+            <tr>
+                <th style="width:15%;">Cód. Produto</th>
+                <th style="width:35%;">Produto</th>
+                <th style="width:15%;">Qtd</th>
+                <th style="width:20%;">Prazo</th>
+                <th style="width:15%;">Ação</th>
+            </tr>
+        </thead>
 
-            <th>Cód. Produto</th>
-            <th>Produto</th>
-            <th>Qtd</th>
-            <th>Prazo</th>
+        <tbody id="tb">
 
-        </tr>
+            <tr>
 
-        <tr>
+                <td>
+                    <input type="text" name="codigo[]">
+                </td>
 
-            <td><input></td>
-            <td><input></td>
-            <td><input></td>
-            <td><input></td>
+                <td>
+                    <input type="text"
+                           class="produto"
+                           readonly>
+                </td>
 
-        </tr>
+                <td>
+                    <input type="text" name="qtd[]">
+                </td>
+
+                <td>
+                    <input type="date" name="prazo[]">
+                </td>
+
+                <td style="text-align:center">
+
+                    <button
+                        type="button"
+                        class="btn-delete excluir">
+
+                        Excluir
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+        </tbody>
 
     </table>
 
 </div>
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function(){
+
+    var btnInserir =
+        document.getElementById('btnInserir');
+
+    var tbody =
+        document.getElementById('tb');
+
+    if(btnInserir){
+
+        btnInserir.addEventListener('click', function(){
+
+            var linha =
+                document.createElement('tr');
+
+            linha.innerHTML = `
+                <td>
+                    <input type="text" name="codigo[]">
+                </td>
+
+                <td>
+                    <input type="text"
+                           class="produto"
+                           readonly>
+                </td>
+
+                <td>
+                    <input type="text" name="qtd[]">
+                </td>
+
+                <td>
+                    <input type="date" name="prazo[]">
+                </td>
+
+                <td style="text-align:center">
+
+                    <button
+                        type="button"
+                        class="btn-delete excluir">
+
+                        Excluir
+
+                    </button>
+
+                </td>
+            `;
+
+            tbody.appendChild(linha);
+
+        });
+
+    }
+
+    document.addEventListener('click', function(e){
+
+        if(e.target.classList.contains('excluir')){
+
+            var linhas =
+                tbody.querySelectorAll('tr');
+
+            if(linhas.length > 1){
+
+                e.target.closest('tr').remove();
+
+            }
+
+        }
+
+    });
+
+});
+
+</script>
