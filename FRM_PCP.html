@@ -1,7 +1,7 @@
 <style>
 
 .pcp-container{
-    font-family:'Segoe UI', Arial, sans-serif;
+    font-family:'Segoe UI',Arial,sans-serif;
     padding:20px;
 }
 
@@ -67,8 +67,9 @@
 }
 
 .produto{
-    background:#F7F7F7;
+    background:#F5F7FA;
     font-weight:500;
+    color:#2d3436;
 }
 
 .total-itens{
@@ -133,7 +134,8 @@
 
                 <td>
                     <input
-                        type="number">
+                        type="number"
+                        min="1">
                 </td>
 
                 <td>
@@ -160,8 +162,10 @@
     </table>
 
     <div class="total-itens">
+
         Total de itens:
         <span id="totalItens">1</span>
+
     </div>
 
 </div>
@@ -170,7 +174,13 @@
 
 var produtos = [];
 
-fetch('./PRODUTOS.csv')
+/* ==========================
+   CARREGA PRODUTOS CSV
+========================== */
+
+fetch('./PRODUTOS.csv',{
+    cache:'no-cache'
+})
 .then(function(response){
 
     return response.text();
@@ -178,15 +188,17 @@ fetch('./PRODUTOS.csv')
 })
 .then(function(texto){
 
-    var linhas = texto.split(/\r?\n/);
+    var linhas =
+        texto.split(/\r?\n/);
 
-    for(var i = 1; i < linhas.length; i++){
+    for(var i=1;i<linhas.length;i++){
 
         if(!linhas[i].trim()){
             continue;
         }
 
-        var campos = linhas[i].split(';');
+        var campos =
+            linhas[i].split(';');
 
         if(campos.length < 2){
             continue;
@@ -196,19 +208,19 @@ fetch('./PRODUTOS.csv')
 
             codigo:
                 campos[0]
-                    .trim()
-                    .toUpperCase(),
+                .trim()
+                .toUpperCase(),
 
             descricao:
                 campos[1]
-                    .trim()
+                .trim()
 
         });
 
     }
 
     console.log(
-        "Produtos carregados:",
+        'Produtos carregados:',
         produtos.length
     );
 
@@ -216,12 +228,16 @@ fetch('./PRODUTOS.csv')
 .catch(function(erro){
 
     console.error(
-        "Erro ao carregar PRODUTOS.csv",
+        'Erro carregando PRODUTOS.csv',
         erro
     );
 
 });
 
+
+/* ==========================
+   BUSCA PRODUTO
+========================== */
 
 function buscarProduto(campo){
 
@@ -231,10 +247,18 @@ function buscarProduto(campo){
              .toUpperCase();
 
     var linha =
-        campo.closest("tr");
+        campo.closest('tr');
 
     var campoProduto =
-        linha.querySelector(".produto");
+        linha.querySelector('.produto');
+
+    if(codigo === ''){
+
+        campoProduto.value = '';
+        campoProduto.style.color = '#333';
+        return;
+
+    }
 
     var encontrado =
         produtos.find(function(item){
@@ -249,42 +273,58 @@ function buscarProduto(campo){
             encontrado.descricao;
 
         campoProduto.style.color =
-            "#333";
+            '#333';
+
+        campoProduto.style.fontWeight =
+            '500';
 
     }else{
 
         campoProduto.value =
-            "PRODUTO NÃO ENCONTRADO";
+            'PRODUTO NÃO ENCONTRADO';
 
         campoProduto.style.color =
-            "#D9534F";
+            '#D9534F';
+
+        campoProduto.style.fontWeight =
+            '600';
 
     }
 
 }
 
 
+/* ==========================
+   TOTAL ITENS
+========================== */
+
 function atualizarTotal(){
 
+    var total =
+        document.querySelectorAll(
+            '#tb tr'
+        ).length;
+
     document.getElementById(
-        "totalItens"
-    ).innerHTML =
-    document.querySelectorAll(
-        "#tb tr"
-    ).length;
+        'totalItens'
+    ).innerHTML = total;
 
 }
 
 
+/* ==========================
+   INSERIR LINHA
+========================== */
+
 document
-.getElementById("btnInserir")
+.getElementById('btnInserir')
 .onclick = function(){
 
     var tbody =
-        document.getElementById("tb");
+        document.getElementById('tb');
 
     var linha =
-        document.createElement("tr");
+        document.createElement('tr');
 
     linha.innerHTML = `
 
@@ -303,7 +343,8 @@ document
 
         <td>
             <input
-                type="number">
+                type="number"
+                min="1">
         </td>
 
         <td>
@@ -332,15 +373,19 @@ document
 };
 
 
+/* ==========================
+   EVENTO BUSCAR PRODUTO
+========================== */
+
 document.addEventListener(
 
-    "blur",
+    'blur',
 
     function(e){
 
         if(
             e.target.classList.contains(
-                "codigo-produto"
+                'codigo-produto'
             )
         ){
 
@@ -357,30 +402,40 @@ document.addEventListener(
 );
 
 
+/* ==========================
+   EXCLUIR LINHA
+========================== */
+
 document.addEventListener(
 
-    "click",
+    'click',
 
     function(e){
 
         if(
             e.target.classList.contains(
-                "excluir"
+                'excluir'
             )
         ){
 
             var linhas =
                 document.querySelectorAll(
-                    "#tb tr"
+                    '#tb tr'
                 );
 
             if(linhas.length > 1){
 
                 e.target
-                 .closest("tr")
+                 .closest('tr')
                  .remove();
 
                 atualizarTotal();
+
+            }else{
+
+                alert(
+                    'É necessário manter ao menos uma linha.'
+                );
 
             }
 
@@ -390,6 +445,10 @@ document.addEventListener(
 
 );
 
+
+/* ==========================
+   INICIALIZAÇÃO
+========================== */
 
 window.onload = function(){
 
