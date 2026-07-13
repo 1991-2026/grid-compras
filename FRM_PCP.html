@@ -176,13 +176,14 @@ var produtos = [];
    CARREGAR PRODUTOS
 ========================== */
 
-fetch('./PRODUTOS.csv?v=' + new Date().getTime())
+ffetch('./PRODUTOS.csv?v=' + new Date().getTime())
+.then(response => response.text())
+.then(texto => {
 
-.then(function(response){
+    console.log("CSV COMPLETO:");
+    console.log(texto);
 
-    return response.text();
-
-})
+});
 
 .then(function(texto){
 
