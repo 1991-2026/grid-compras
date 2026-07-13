@@ -7,7 +7,7 @@
 
 .pcp-title{
     color:#0B3A82;
-    font-size:26px;
+    font-size:28px;
     font-weight:600;
     margin-bottom:5px;
 }
@@ -60,7 +60,7 @@
 
 .tabela-pcp input{
     width:100%;
-    height:34px;
+    height:36px;
     border:1px solid #CCC;
     border-radius:3px;
     padding:0 8px;
@@ -68,6 +68,13 @@
 
 .produto{
     background:#F7F7F7;
+    font-weight:500;
+}
+
+.total-itens{
+    margin-top:15px;
+    font-weight:600;
+    color:#0B3A82;
 }
 
 </style>
@@ -152,13 +159,16 @@
 
     </table>
 
+    <div class="total-itens">
+        Total de itens:
+        <span id="totalItens">1</span>
+    </div>
+
 </div>
 
 <script>
 
 var produtos = [];
-
-/* Carrega PRODUTOS.csv */
 
 fetch('./PRODUTOS.csv')
 .then(function(response){
@@ -168,17 +178,15 @@ fetch('./PRODUTOS.csv')
 })
 .then(function(texto){
 
-    var linhas =
-        texto.split(/\r?\n/);
+    var linhas = texto.split(/\r?\n/);
 
-    for(var i=1; i<linhas.length; i++){
+    for(var i = 1; i < linhas.length; i++){
 
         if(!linhas[i].trim()){
             continue;
         }
 
-        var campos =
-            linhas[i].split(';');
+        var campos = linhas[i].split(';');
 
         if(campos.length < 2){
             continue;
@@ -188,18 +196,19 @@ fetch('./PRODUTOS.csv')
 
             codigo:
                 campos[0]
-                .trim()
-                .toUpperCase(),
+                    .trim()
+                    .toUpperCase(),
 
             descricao:
                 campos[1]
-                .trim()
+                    .trim()
 
         });
+
     }
 
     console.log(
-        'Produtos carregados:',
+        "Produtos carregados:",
         produtos.length
     );
 
@@ -207,26 +216,25 @@ fetch('./PRODUTOS.csv')
 .catch(function(erro){
 
     console.error(
-        'Erro carregando PRODUTOS.csv',
+        "Erro ao carregar PRODUTOS.csv",
         erro
     );
 
 });
 
-/* Busca Produto */
 
 function buscarProduto(campo){
 
     var codigo =
         campo.value
-        .trim()
-        .toUpperCase();
+             .trim()
+             .toUpperCase();
 
     var linha =
-        campo.closest('tr');
+        campo.closest("tr");
 
     var campoProduto =
-        linha.querySelector('.produto');
+        linha.querySelector(".produto");
 
     var encontrado =
         produtos.find(function(item){
@@ -240,24 +248,43 @@ function buscarProduto(campo){
         campoProduto.value =
             encontrado.descricao;
 
+        campoProduto.style.color =
+            "#333";
+
     }else{
 
-        campoProduto.value = '';
+        campoProduto.value =
+            "PRODUTO NÃO ENCONTRADO";
+
+        campoProduto.style.color =
+            "#D9534F";
 
     }
+
 }
 
-/* Inserir Linha */
+
+function atualizarTotal(){
+
+    document.getElementById(
+        "totalItens"
+    ).innerHTML =
+    document.querySelectorAll(
+        "#tb tr"
+    ).length;
+
+}
+
 
 document
-.getElementById('btnInserir')
+.getElementById("btnInserir")
 .onclick = function(){
 
     var tbody =
-        document.getElementById('tb');
+        document.getElementById("tb");
 
     var linha =
-        document.createElement('tr');
+        document.createElement("tr");
 
     linha.innerHTML = `
 
@@ -275,11 +302,13 @@ document
         </td>
 
         <td>
-            <input type="number">
+            <input
+                type="number">
         </td>
 
         <td>
-            <input type="date">
+            <input
+                type="date">
         </td>
 
         <td style="text-align:center">
@@ -298,17 +327,20 @@ document
 
     tbody.appendChild(linha);
 
+    atualizarTotal();
+
 };
 
-/* Eventos Dinâmicos */
 
 document.addEventListener(
-    'blur',
+
+    "blur",
+
     function(e){
 
         if(
             e.target.classList.contains(
-                'codigo-produto'
+                "codigo-produto"
             )
         ){
 
@@ -319,35 +351,50 @@ document.addEventListener(
         }
 
     },
+
     true
+
 );
 
+
 document.addEventListener(
-    'click',
+
+    "click",
+
     function(e){
 
         if(
             e.target.classList.contains(
-                'excluir'
+                "excluir"
             )
         ){
 
             var linhas =
                 document.querySelectorAll(
-                    '#tb tr'
+                    "#tb tr"
                 );
 
             if(linhas.length > 1){
 
                 e.target
-                 .closest('tr')
+                 .closest("tr")
                  .remove();
+
+                atualizarTotal();
 
             }
 
         }
 
     }
+
 );
+
+
+window.onload = function(){
+
+    atualizarTotal();
+
+};
 
 </script>
