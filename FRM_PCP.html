@@ -164,6 +164,9 @@
         <span id="totalItens">1</span>
     </div>
 
+<input type="hidden" id="jsonItens" name="jsonItens">
+<input type="hidden" id="assuntoSolicitacao" name="assuntoSolicitacao">
+
 </div>
 
 <script>
@@ -306,11 +309,41 @@ document
 
     `;
 
-    tbody.appendChild(linha);
+tbody.appendChild(linha);
 
-    atualizarTotal();
+atualizarTotal();
+atualizarDadosProcesso();
 
 };
+
+function atualizarDadosProcesso(){
+
+    var itens = [];
+
+    document
+        .querySelectorAll('#tb tr')
+        .forEach(function(linha){
+
+            var campos =
+                linha.querySelectorAll('input');
+
+            itens.push({
+
+                codigo: campos[0].value,
+                produto: campos[1].value,
+                quantidade: campos[2].value,
+                prazo: campos[3].value
+
+            });
+
+        });
+
+    document.getElementById(
+        'jsonItens'
+    ).value =
+        JSON.stringify(itens);
+
+}
 
 document.addEventListener(
     'click',
@@ -329,11 +362,12 @@ document.addEventListener(
 
             if(linhas.length > 1){
 
-                e.target
-                    .closest('tr')
-                    .remove();
+               e.target
+    .closest('tr')
+    .remove();
 
-                atualizarTotal();
+atualizarTotal();
+atualizarDadosProcesso();
 
             }
 
@@ -345,6 +379,7 @@ document.addEventListener(
 window.onload = function(){
 
     atualizarTotal();
+    atualizarDadosProcesso();
 
 };
 
