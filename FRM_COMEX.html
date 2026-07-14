@@ -1,105 +1,422 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cotação COMEX</title>
-<style>
-:root{
-  --navy:#1B3B6F;
-  --navy-dark:#122A52;
-  --gray-bg:#D9D9D9;
-  --border:#BDBDBD;
-  --border-light:#E3E3E3;
-  --text:#2B2B2B;
-  --muted:#6C7A89;
-  --surface:#FFFFFF;
-  --surface-alt:#F5F6F7;
-  --radius:6px;
-}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;width:100%;background:#EEF0F2}
-body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;color:var(--text);font-size:16px;padding:20px}
 
-.app-header{
-  display:flex;align-items:center;gap:20px;
-  background:var(--surface);border:1px solid var(--border-light);
-  border-radius:var(--radius);padding:16px 24px;margin-bottom:20px;
-  box-shadow:0 1px 3px rgba(0,0,0,.06);
-}
-.brand-mark{font-family:Georgia,'Times New Roman',serif;font-weight:800;font-style:italic;font-size:30px;color:var(--navy);letter-spacing:.5px;white-space:nowrap}
-.brand-divider{width:1px;height:40px;background:var(--border-light)}
-.page-heading h1{margin:0;font-size:22px;font-weight:700;color:var(--navy-dark);letter-spacing:.3px}
-.page-heading p{margin:2px 0 0;font-size:14px;color:var(--muted)}
+    <!-- =====================================================
+         CONFIGURAÇÕES BÁSICAS DA PÁGINA
+    ====================================================== -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
 
-.toolbar{margin-bottom:14px}
-.btn{
-  display:inline-flex;align-items:center;gap:6px;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--radius);padding:10px 16px;
-  font-size:15px;font-weight:600;color:var(--navy-dark);
-  cursor:pointer;transition:background .15s,box-shadow .15s;
-}
-.btn:hover{background:var(--surface-alt);box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.btn-danger{color:#B3261E;padding:8px 14px;font-size:14px}
-.btn-danger:hover{background:#FBEAE9}
+    <title>Cotação Comércio Exterior</title>
 
-.card{background:var(--surface);border:1px solid var(--border-light);border-radius:var(--radius);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.wrap{width:100%;overflow-x:auto}
-table{border-collapse:collapse;width:100%;min-width:1800px;white-space:nowrap}
-th{background:var(--gray-bg);border:1px solid var(--border);padding:12px 8px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;text-align:center}
-td{border:1px solid var(--border-light);padding:8px}
-input{width:100%;min-width:120px;height:40px;font-size:15px;border:1px solid var(--border);border-radius:4px;padding:0 10px;background:var(--surface)}
-input.readonly,input[readonly]{background:var(--surface-alt);color:#555}
-input:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,59,111,.12)}
-.acao{width:120px;text-align:center}
-</style>
-<script>
-function moeda(v){return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v)}
-function valor(c){let n=(c.value||'').replace(/\./g,'').replace(',','.').replace(/[^0-9.]/g,'');return parseFloat(n)||0}
-function calc(el){let tr=el.closest('tr');let q=valor(tr.querySelector('.qtd'));let p=valor(tr.querySelector('.preco'));tr.querySelector('.total').value=moeda(q*p)}
-function fmt(el){let v=valor(el);el.value=v?moeda(v):'';calc(el)}
-function addRow(){let r=document.getElementById('tb').insertRow();r.innerHTML=document.getElementById('tpl').innerHTML}
-function delRow(b){b.closest('tr').remove()}
-</script>
+    <!-- =====================================================
+         ESTILOS (CSS)
+    ====================================================== -->
+    <style>
+
+        /* Variáveis globais */
+        :root {
+            --navy: #1B3B6F;
+            --navy-dark: #122A52;
+            --gray-bg: #D9D9D9;
+            --border: #BDBDBD;
+            --border-light: #E3E3E3;
+            --text: #2B2B2B;
+            --muted: #6C7A89;
+            --surface: #FFFFFF;
+            --surface-alt: #F5F6F7;
+            --radius: 6px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background: #EEF0F2;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            color: var(--text);
+            font-size: 16px;
+            padding: 20px;
+        }
+
+        /* =====================================================
+           CABEÇALHO
+        ====================================================== */
+        .app-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            padding: 16px 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+        }
+
+        .brand-mark {
+            font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+            font-weight: 700;
+            font-style: italic;
+            font-size: 30px;
+            color: var(--navy-dark);
+        }
+
+        .brand-divider {
+            width: 1px;
+            height: 40px;
+            background: var(--border-light);
+        }
+
+        .page-heading h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--navy-dark);
+        }
+
+        .page-heading p {
+            margin: 2px 0 0;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        /* =====================================================
+           BOTÕES
+        ====================================================== */
+        .toolbar {
+            margin-bottom: 14px;
+        }
+
+        .btn {
+            background: #123D7A;
+            border: 1px solid #123D7A;
+            border-radius: 6px;
+            padding: 10px 16px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background: #D9534F;
+            color: #fff;
+            border: 1px solid #D9534F;
+            padding: 8px 14px;
+            border-radius: 6px;
+        }
+
+        /* =====================================================
+           TABELA
+        ====================================================== */
+        .card {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--border-light);
+            padding: 8px;
+        }
+
+        th {
+            background: var(--gray-bg);
+            text-align: center;
+        }
+
+        /* =====================================================
+           CAMPOS
+        ====================================================== */
+        input {
+            width: 100%;
+            height: 40px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0 10px;
+        }
+
+        .readonly {
+            background: var(--surface-alt);
+        }
+
+        .acao {
+            text-align: center;
+            width: 120px;
+        }
+
+        /* =====================================================
+           CONTADOR DE ITENS
+        ====================================================== */
+        .total-itens {
+            margin-top: 14px;
+            color: #123D7A;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+    </style>
+
+    <!-- =====================================================
+         FUNÇÕES JAVASCRIPT
+    ====================================================== -->
+    <script>
+
+        /* Formatação de moeda */
+        function moeda(v) {
+            return new Intl.NumberFormat(
+                'pt-BR',
+                {
+                    style: 'currency',
+                    currency: 'BRL'
+                }
+            ).format(v);
+        }
+
+        /* Conversão para número */
+        function valor(campo) {
+            let n = (campo.value || '')
+                .replace(/\./g, '')
+                .replace(',', '.')
+                .replace(/[^0-9.]/g, '');
+
+            return parseFloat(n) || 0;
+        }
+
+        /* Calcula total */
+        function calc(el) {
+
+            let tr = el.closest('tr');
+
+            let qtd = valor(
+                tr.querySelector('.qtd')
+            );
+
+            let preco = valor(
+                tr.querySelector('.preco')
+            );
+
+            tr.querySelector('.total').value =
+                moeda(qtd * preco);
+        }
+
+        /* Formata moeda */
+        function fmt(el) {
+
+            let v = valor(el);
+
+            el.value = v
+                ? moeda(v)
+                : '';
+
+            calc(el);
+        }
+
+        /* Atualiza contador */
+        function atualizarContador() {
+
+            document.getElementById(
+                'contadorItens'
+            ).textContent =
+                document.querySelectorAll('#tb tr')
+                    .length;
+        }
+
+        /* Adiciona linha */
+        function addRow() {
+
+            let r =
+                document.getElementById('tb')
+                    .insertRow();
+
+            r.innerHTML =
+                document.getElementById('tpl')
+                    .innerHTML;
+
+            atualizarContador();
+        }
+
+        /* Exclui linha */
+        function delRow(btn) {
+
+            btn.closest('tr').remove();
+
+            atualizarContador();
+        }
+
+    </script>
+
 </head>
+
 <body>
 
-<header class="app-header">
-  <div class="brand-mark">SUGGAR</div>
-  <div class="brand-divider"></div>
-  <div class="page-heading">
-    <h1>COTAÇÃO COMEX</h1>
-    <p>Comércio Exterior · Cotação de Fornecedores Internacionais</p>
-  </div>
-</header>
+    <!-- =====================================================
+         CABEÇALHO
+    ====================================================== -->
+    <header class="app-header">
 
-<div class="toolbar">
-  <button class="btn" type="button" onclick="addRow()">+ Inserir Linha</button>
-</div>
+        <div class="brand-mark">
+            SUGGAR
+        </div>
 
-<div class="card">
-<div class="wrap">
-<table>
-<thead><tr><th>CÓD.</th><th>PRODUTO</th><th>QTD PROD.</th><th>PRAZO PCP</th><th>CÓD. FORN.</th><th>FORNECEDOR</th><th>QTD COMEX</th><th>PREÇO UNIT.</th><th>TOTAL</th><th>PRAZO COMEX</th><th>AÇÃO</th></tr></thead>
-<tbody id="tb"></tbody>
-</table>
-</div>
-</div>
+        <div class="brand-divider"></div>
 
-<template id="tpl"><tr>
-<td><input class="readonly" readonly></td>
-<td><input class="readonly" readonly></td>
-<td><input class="readonly" readonly></td>
-<td><input class="readonly" readonly></td>
-<td><input></td>
-<td><input class="readonly" readonly></td>
-<td><input class="qtd" oninput="calc(this)"></td>
-<td><input class="preco" oninput="calc(this)" onblur="fmt(this)"></td>
-<td><input class="total readonly" readonly></td>
-<td><input></td>
-<td class="acao"><button class="btn btn-danger" onclick="delRow(this)" type="button">Excluir</button></td>
-</tr></template>
-<script>addRow()</script>
+        <div class="page-heading">
+            <h1>COTAÇÃO COMÉRCIO EXTERIOR</h1>
+
+            <p>
+                Departamento de Comércio Exterior ·
+                Cotação de Fornecedores Internacionais
+            </p>
+        </div>
+
+    </header>
+
+    <!-- =====================================================
+         BOTÃO INSERIR LINHA
+    ====================================================== -->
+    <div class="toolbar">
+
+        <button
+            class="btn"
+            onclick="addRow()">
+
+            + Inserir Linha
+
+        </button>
+
+    </div>
+
+    <!-- =====================================================
+         TABELA PRINCIPAL
+    ====================================================== -->
+    <div class="card">
+        <div class="wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>CÓD.</th>
+                        <th>PRODUTO</th>
+                        <th>QTD PROD.</th>
+                        <th>PRAZO PCP</th>
+                        <th>CÓD. FORN.</th>
+                        <th>FORNECEDOR</th>
+                        <th>QTD COM. EXTERIOR</th>
+                        <th>PREÇO UNIT.</th>
+                        <th>TOTAL</th>
+                        <th>PRAZO COM. EXTERIOR</th>
+                        <th>AÇÃO</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tb"></tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+    <!-- =====================================================
+         TOTAL DE ITENS
+    ====================================================== -->
+    <div class="total-itens">
+        Total de itens:
+        <span id="contadorItens">0</span>
+    </div>
+
+    <!-- =====================================================
+         TEMPLATE DA LINHA
+    ====================================================== -->
+    <template id="tpl">
+
+        <tr>
+
+            <td><input class="readonly" readonly></td>
+
+            <td><input class="readonly" readonly></td>
+
+            <td><input class="readonly" readonly></td>
+
+            <td><input class="readonly" readonly></td>
+
+            <td><input></td>
+
+            <td><input class="readonly" readonly></td>
+
+            <td>
+                <input
+                    class="qtd"
+                    oninput="calc(this)">
+            </td>
+
+            <td>
+                <input
+                    class="preco"
+                    oninput="calc(this)"
+                    onblur="fmt(this)">
+            </td>
+
+            <td>
+                <input
+                    class="total readonly"
+                    readonly>
+            </td>
+
+            <td>
+                <input>
+            </td>
+
+            <td class="acao">
+
+                <button
+                    class="btn-danger"
+                    onclick="delRow(this)"
+                    type="button">
+
+                    Excluir
+
+                </button>
+
+            </td>
+
+        </tr>
+
+    </template>
+
+    <!-- =====================================================
+         INICIALIZAÇÃO
+    ====================================================== -->
+    <script>
+
+        addRow();
+        atualizarContador();
+
+    </script>
+
 </body>
+
 </html>
