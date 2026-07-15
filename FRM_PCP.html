@@ -2,14 +2,17 @@
 <html lang="pt-BR">
 
 <head>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Solicitação PCP</title>
 
-<script src="httpsdflare.com/ajax/libs/iframe-resizer/3.5.14/iframeResizer.contentWindow.min.js
-<script src="https://cdn.senior.com.br/platform/3.2/js/workflow-form.js"></script>
-
 <style>
+
+/* =====================================================
+CONFIGURAÇÕES GERAIS (PADRÃO COMEX / COMPRAS)
+===================================================== */
+
 :root{
     --navy:#1B3B6F;
     --navy-dark:#122A52;
@@ -20,23 +23,31 @@
     --muted:#6C7A89;
     --surface:#FFFFFF;
     --surface-alt:#F5F6F7;
+    --radius:6px;
 }
 
 *{
     box-sizing:border-box;
 }
 
-html,body{
-    width:100%;
-    min-height:100%;
+html,
+body{
     margin:0;
+    padding:0;
+    width:100%;
+    background:#EEF0F2;
 }
 
 body{
-    padding:20px;
     font-family:'Segoe UI',Tahoma,Arial,sans-serif;
     color:var(--text);
+    font-size:16px;
+    padding:20px;
 }
+
+/* =====================================================
+CABEÇALHO
+===================================================== */
 
 .app-header{
     display:flex;
@@ -51,10 +62,12 @@ body{
 }
 
 .brand-mark{
+    font-family:'Segoe UI',Tahoma,Arial,sans-serif;
     font-weight:700;
     font-style:italic;
     font-size:30px;
     color:var(--navy-dark);
+    white-space:nowrap;
 }
 
 .brand-divider{
@@ -66,23 +79,31 @@ body{
 .page-heading h1{
     margin:0;
     font-size:22px;
+    font-weight:700;
+    color:var(--navy-dark);
 }
 
 .page-heading p{
     margin:2px 0 0;
+    font-size:14px;
     color:var(--muted);
 }
 
+/* =====================================================
+BOTÃO INSERIR
+===================================================== */
+
 .toolbar{
-    margin-bottom:15px;
+    margin-bottom:14px;
 }
 
 .btn-add{
     background:#123D7A;
-    color:#FFF;
     border:1px solid #123D7A;
     border-radius:6px;
     padding:10px 16px;
+    color:#FFFFFF;
+    font-weight:600;
     cursor:pointer;
 }
 
@@ -90,9 +111,24 @@ body{
     background:#0F3366;
 }
 
+/* =====================================================
+CARD
+===================================================== */
+
+.card{
+    background:#FFFFFF;
+    border:1px solid var(--border-light);
+    border-radius:6px;
+    overflow:hidden;
+}
+
 .wrap{
     overflow-x:auto;
 }
+
+/* =====================================================
+TABELA
+===================================================== */
 
 .tabela-pcp{
     width:100%;
@@ -102,39 +138,37 @@ body{
 
 .tabela-pcp th,
 .tabela-pcp td{
-    border:1px solid #E3E3E3;
-    padding:10px 8px;
+    border:1px solid var(--border-light);
+    padding:8px;
 }
 
 .tabela-pcp th{
     background:#D9D9D9;
+    border:1px solid #E3E3E3;
+    padding:8px;
     text-align:center;
+    vertical-align:middle;
+
+    font-family:'Segoe UI',Tahoma,Arial,sans-serif;
     font-size:16px;
     font-weight:700;
     color:#1F1F1F;
-    height:54px;
-}
 
-.tabela-pcp td{
-    background:#F3F3F3;
+    line-height:1.15;
+    white-space:normal;
 }
-
 .tabela-pcp input{
     width:100%;
-    height:38px;
-    padding:6px 8px;
-    border:1px solid #B5B5B5;
-    border-radius:2px;
+    height:40px;
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:0 10px;
     font-size:14px;
-    background:#FFFFFF;
-}
-
-.prazo{
-    min-width:150px;
 }
 
 .produto{
-    background:#EFEFEF !important;
+    background:var(--surface-alt);
+    color:#555;
 }
 
 .acao{
@@ -142,60 +176,102 @@ body{
     text-align:center;
 }
 
+/* =====================================================
+BOTÃO EXCLUIR
+===================================================== */
+
 .btn-delete{
-    width:70px;
-    height:34px;
-    border:none;
-    border-radius:6px;
     background:#D9534F;
-    color:#FFF;
-    cursor:pointer;
+    color:#FFFFFF;
+    border:1px solid #D9534F;
+    border-radius:6px;
+    padding:8px 14px;
     font-size:14px;
+    font-weight:400;
+    cursor:pointer;
 }
 .btn-delete:hover{
     background:#C9302C;
 }
 
+/* =====================================================
+CONTADOR
+===================================================== */
+
 .total-itens{
     margin-top:14px;
     color:#123D7A;
+    font-size:14px;
     font-weight:700;
 }
+
 </style>
 
 </head>
 
 <body>
 
+<!-- =====================================================
+CABEÇALHO
+===================================================== -->
+
 <header class="app-header">
-    <div class="brand-mark">SUGGAR</div>
+
+    <div class="brand-mark">
+        SUGGAR
+    </div>
+
     <div class="brand-divider"></div>
 
     <div class="page-heading">
-        <h1>SOLICITAÇÃO PCP</h1>
-        <p>Planejamento e Controle da Produção</p>
+
+        <h1>
+            SOLICITAÇÃO PCP
+        </h1>
+
+        <p>
+            Planejamento e Controle da Produção
+        </p>
+
     </div>
+
 </header>
 
+<!-- =====================================================
+BOTÃO INSERIR
+===================================================== -->
+
 <div class="toolbar">
-    <button type="button" id="btnInserir" class="btn-add">
+
+    <button
+        type="button"
+        id="btnInserir"
+        class="btn-add">
+
         + Inserir Linha
+
     </button>
+
 </div>
 
+<!-- =====================================================
+TABELA
+===================================================== -->
+
 <div class="card">
+
     <div class="wrap">
 
         <table class="tabela-pcp">
 
             <thead>
-<tr>
-    <th style="width:25%;">CÓD. PRODUTO</th>
-    <th style="width:25%;">PRODUTO</th>
-    <th style="width:25%;">QTD</th>
-    <th style="width:18%;">PRAZO</th>
-    <th style="width:7%;">AÇÃO</th>
-</tr>
+    <tr>
+        <th style="width:20%;">CÓD.<br>PRODUTO</th>
+        <th style="width:20%;">PRODUTO</th>
+        <th style="width:20%;">QTD</th>
+        <th style="width:20%;">PRAZO</th>
+        <th style="width:20%;">AÇÃO</th>
+    </tr>
 </thead>
 
             <tbody id="tb">
@@ -205,7 +281,8 @@ body{
                     <td>
                         <input
                             type="text"
-                            class="codigo-produto">
+                            class="codigo-produto"
+                            onblur="buscarProduto(this)">
                     </td>
 
                     <td>
@@ -222,15 +299,20 @@ body{
                     </td>
 
                     <td>
-                        <input type="date" class="prazo">
+                        <input
+                            type="date">
                     </td>
 
                     <td class="acao">
+
                         <button
                             type="button"
                             class="btn-delete excluir">
+
                             Excluir
+
                         </button>
+
                     </td>
 
                 </tr>
@@ -240,45 +322,102 @@ body{
         </table>
 
     </div>
+
 </div>
+
+<!-- =====================================================
+CONTADOR DE ITENS
+===================================================== -->
 
 <div class="total-itens">
+
     Total de itens:
     <span id="totalItens">1</span>
+
 </div>
 
-<input type="hidden" id="jsonItens" name="jsonItens">
-<input type="hidden" id="assuntoSolicitacao" name="assuntoSolicitacao">
+<input
+    type="hidden"
+    id="jsonItens"
+    name="jsonItens">
+
+<input
+    type="hidden"
+    id="assuntoSolicitacao"
+    name="assuntoSolicitacao">
 
 <script>
+
+/* =====================================================
+BASE DE PRODUTOS
+===================================================== */
+
 var produtos = [
-    {codigo:"TP62BM",descricao:"Dep Suggar Vega 60CM 220V C/Lum"},
-    {codigo:"AD2422PT",descricao:"Adega Nantes Suggar 24 G 220V"},
-    {codigo:"CT2822BR",descricao:"Centrifuga Suggar Branca 220V"},
-    {codigo:"DP62IX",descricao:"Depurador Orion 60CM Inox 220V"},
-    {codigo:"EF8662CXBR",descricao:"Espremedor de Frutas Suggar 220V CX C/12"},
-    {codigo:"FE4222BR",descricao:"Forno Eletrico Suggar Branco 42 Litros 220V"},
-    {codigo:"105008",descricao:"Suporte de fixacao do queimador"}
+
+    {
+        codigo:"TP62BM",
+        descricao:"Dep Suggar Vega 60CM 220V C/Lum"
+    },
+
+    {
+        codigo:"AD2422PT",
+        descricao:"Adega Nantes Suggar 24 G 220V"
+    },
+
+    {
+        codigo:"CT2822BR",
+        descricao:"Centrifuga Suggar Branca 220V"
+    },
+
+    {
+        codigo:"DP62IX",
+        descricao:"Depurador Orion 60CM Inox 220V"
+    },
+
+    {
+        codigo:"EF8662CXBR",
+        descricao:"Espremedor de Frutas Suggar 220V CX C/12"
+    },
+
+    {
+        codigo:"FE4222BR",
+        descricao:"Forno Eletrico Suggar Branco 42 Litros 220V"
+    },
+
+    {
+        codigo:"105008",
+        descricao:"Suporte de fixacao do queimador"
+    }
+
 ];
+
+/* =====================================================
+BUSCAR PRODUTO
+===================================================== */
 
 function buscarProduto(campo){
 
-    var codigo = campo.value.trim().toUpperCase();
+    var codigo =
+        campo.value.trim().toUpperCase();
 
-    var linha = campo.closest("tr");
+    var linha =
+        campo.closest('tr');
 
     var campoProduto =
-        linha.querySelector(".produto");
+        linha.querySelector('.produto');
 
-    campoProduto.value = "";
+    campoProduto.value = '';
 
     if(!codigo){
-        atualizarDadosProcesso();
         return;
     }
 
     var encontrado =
-        produtos.find(p => p.codigo === codigo);
+        produtos.find(function(item){
+
+            return item.codigo === codigo;
+
+        });
 
     if(encontrado){
 
@@ -286,143 +425,150 @@ function buscarProduto(campo){
             encontrado.descricao;
 
         campoProduto.style.color =
-            "#333";
+            '#333';
 
     }else{
 
         campoProduto.value =
-            "PRODUTO NÃO ENCONTRADO";
+            'PRODUTO NÃO ENCONTRADO';
 
         campoProduto.style.color =
-            "#D9534F";
+            '#D9534F';
+
     }
 
     atualizarDadosProcesso();
 }
 
+/* =====================================================
+TOTAL ITENS
+===================================================== */
+
 function atualizarTotal(){
 
-    document.getElementById("totalItens")
-    .textContent =
-        document.querySelectorAll("#tb tr").length;
+    document.getElementById(
+        'totalItens'
+    ).textContent =
+
+    document.querySelectorAll(
+        '#tb tr'
+    ).length;
 }
 
-function atualizarDadosProcesso(){
+/* =====================================================
+INSERIR LINHA
+===================================================== */
 
-    var itens = [];
-
-    document.querySelectorAll("#tb tr")
-    .forEach(function(linha){
-
-        var campos =
-            linha.querySelectorAll("input");
-
-        itens.push({
-            codigo:campos[0].value,
-            produto:campos[1].value,
-            quantidade:campos[2].value,
-            prazo:campos[3].value
-        });
-
-    });
-
-    document.getElementById("jsonItens")
-        .value = JSON.stringify(itens);
-}
-
-function registrarEventosLinha(linha){
-
-    linha.querySelectorAll("input")
-    .forEach(function(campo){
-
-        campo.addEventListener(
-            "input",
-            atualizarDadosProcesso
-        );
-
-        campo.addEventListener(
-            "change",
-            atualizarDadosProcesso
-        );
-
-    });
-
-}
-
-document.addEventListener("blur", function(e){
-
-    if(
-        e.target.classList.contains(
-            "codigo-produto"
-        )
-    ){
-        buscarProduto(e.target);
-    }
-
-}, true);
-
-document.getElementById("btnInserir")
-.addEventListener("click", function(){
+document
+.getElementById('btnInserir')
+.onclick = function(){
 
     var tbody =
-        document.getElementById("tb");
+        document.getElementById('tb');
 
     var linha =
-        document.createElement("tr");
+        document.createElement('tr');
 
     linha.innerHTML = `
+
         <td>
-            <input type="text" class="codigo-produto">
+            <input
+                type="text"
+                class="codigo-produto"
+                onblur="buscarProduto(this)">
         </td>
 
         <td>
-            <input type="text" class="produto" readonly>
+            <input
+                type="text"
+                class="produto"
+                readonly>
         </td>
 
         <td>
-            <input type="number" min="1">
+            <input
+                type="number"
+                min="1">
         </td>
 
         <td>
-            <input type="date">
+            <input
+                type="date">
         </td>
 
         <td class="acao">
+
             <button
                 type="button"
                 class="btn-delete excluir">
+
                 Excluir
+
             </button>
+
         </td>
     `;
 
     tbody.appendChild(linha);
 
-    registrarEventosLinha(linha);
-
     atualizarTotal();
     atualizarDadosProcesso();
-});
+};
+
+/* =====================================================
+GERA JSON
+===================================================== */
+
+function atualizarDadosProcesso(){
+
+    var itens = [];
+
+    document
+    .querySelectorAll('#tb tr')
+    .forEach(function(linha){
+
+        var campos =
+            linha.querySelectorAll('input');
+
+        itens.push({
+
+            codigo:campos[0].value,
+            produto:campos[1].value,
+            quantidade:campos[2].value,
+            prazo:campos[3].value
+
+        });
+
+    });
+
+    document
+    .getElementById('jsonItens')
+    .value = JSON.stringify(itens);
+}
+
+/* =====================================================
+EXCLUIR LINHA
+===================================================== */
 
 document.addEventListener(
-    "click",
+    'click',
     function(e){
 
         if(
             e.target.classList.contains(
-                "excluir"
+                'excluir'
             )
         ){
 
             var linhas =
                 document.querySelectorAll(
-                    "#tb tr"
+                    '#tb tr'
                 );
 
             if(linhas.length > 1){
 
                 e.target
-                .closest("tr")
+                .closest('tr')
                 .remove();
 
                 atualizarTotal();
@@ -432,33 +578,20 @@ document.addEventListener(
     }
 );
 
-window.addEventListener("load", function(){
+/* =====================================================
+LOAD
+===================================================== */
 
-    document
-    .querySelectorAll("#tb tr")
-    .forEach(registrarEventosLinha);
+window.addEventListener(
+    'load',
+    function(){
 
-    atualizarTotal();
-    atualizarDadosProcesso();
-});
-
-var workflowCockpit = {
-
-    init:function(data){
-        console.log(data);
-    },
-
-    onSubmit:function(){
-
+        atualizarTotal();
         atualizarDadosProcesso();
 
-        return true;
-    },
-
-    onError:function(erro){
-        console.log(erro);
     }
-};
+);
+
 </script>
 
 </body>
