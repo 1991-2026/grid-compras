@@ -29,13 +29,67 @@ CONFIGURAÇÕES GERAIS (PADRÃO COMEX / COMPRAS)
 *{
     box-sizing:border-box;
 }
+<script>
+/* =====================================================
+REDIMENSIONAMENTO AUTOMÁTICO DO FORMULÁRIO
+===================================================== */
+
+function resizeFormulario() {
+
+    try {
+
+        var altura = Math.max(
+            document.body.scrollHeight,
+            document.documentElement.scrollHeight,
+            document.body.offsetHeight,
+            document.documentElement.offsetHeight
+        );
+
+        if (window.parent) {
+
+            window.parent.postMessage({
+                frameHeight: altura + 50
+            }, "*");
+
+        }
+
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+window.addEventListener("load", function () {
+
+    resizeFormulario();
+
+    setTimeout(resizeFormulario, 500);
+    setTimeout(resizeFormulario, 1000);
+    setTimeout(resizeFormulario, 2000);
+
+});
+
+window.addEventListener("resize", resizeFormulario);
+
+/* Atualiza quando inserir/excluir linhas */
+const observer = new MutationObserver(function () {
+    resizeFormulario();
+});
+
+observer.observe(document.body, {
+    childList: true,
+    subtree: true
+});
+</script>
 
 html,
 body{
     margin:0;
     padding:0;
     width:100%;
+    min-width:100%;
+    min-height:100%;
     background:#EEF0F2;
+    overflow-x:hidden;
 }
 
 body{
@@ -116,6 +170,7 @@ CARD
 ===================================================== */
 
 .card{
+    width:100%;
     background:#FFFFFF;
     border:1px solid var(--border-light);
     border-radius:6px;
@@ -123,6 +178,7 @@ CARD
 }
 
 .wrap{
+    width:100%;
     overflow-x:auto;
 }
 
